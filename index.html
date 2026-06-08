@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ИБ-Академия — Дипломный проект 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--cyan:#00d4ff;--blue:#0066ff;--dark:#030a1a}
+body{background:var(--dark);font-family:'Exo 2',sans-serif;overflow:hidden;width:100%;height:100vh}
+canvas#stars{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.slides{position:relative;z-index:10;width:100%;height:100vh;overflow:hidden}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transform:translateY(40px);transition:all 0.7s cubic-bezier(.4,0,.2,1);pointer-events:none;padding:2rem}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateY(-40px)}
+.nav{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;gap:16px;z-index:100;align-items:center}
+.nav-btn{background:rgba(0,212,255,0.1);border:1px solid var(--cyan);color:var(--cyan);padding:8px 22px;border-radius:6px;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:13px;transition:all .3s}
+.nav-btn:hover{background:rgba(0,212,255,0.25)}
+.shield-svg{filter:drop-shadow(0 0 20px rgba(0,212,255,0.6));animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{filter:drop-shadow(0 0 20px rgba(0,212,255,0.6))}50%{filter:drop-shadow(0 0 40px rgba(0,212,255,0.9))}}
+.hero-title{font-family:'Orbitron',monospace;font-size:clamp(1rem,2.8vw,1.6rem);font-weight:900;color:#fff;text-align:center;max-width:820px;line-height:1.3;margin:1.2rem 0 .5rem;text-shadow:0 0 30px rgba(0,212,255,.4)}
+.hero-sub{font-size:clamp(.7rem,1.5vw,.9rem);color:rgba(0,212,255,.8);letter-spacing:.15em;text-transform:uppercase;font-weight:300;margin-bottom:.8rem}
+.badge{display:inline-block;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.4);color:var(--cyan);padding:5px 16px;border-radius:20px;font-size:.75rem;letter-spacing:.1em;font-weight:600;margin:.2rem}
+.link-pill{background:linear-gradient(135deg,rgba(0,212,255,.15),rgba(0,102,255,.15));border:1px solid var(--cyan);color:var(--cyan);padding:8px 20px;border-radius:24px;font-size:.8rem;letter-spacing:.05em;cursor:pointer;margin-top:.8rem;transition:all .3s;display:inline-block;text-decoration:none}
+.link-pill:hover{background:rgba(0,212,255,.25);box-shadow:0 0 20px rgba(0,212,255,.3)}
+.slide-title{font-family:'Orbitron',monospace;font-size:clamp(.85rem,2vw,1.1rem);font-weight:700;color:var(--cyan);letter-spacing:.15em;text-transform:uppercase;margin-bottom:2rem;position:relative;text-align:center}
+.slide-title::after{content:'';display:block;width:60px;height:2px;background:var(--cyan);margin:.5rem auto 0;box-shadow:0 0 10px var(--cyan)}
+.secret-title{font-family:'Orbitron',monospace;font-size:clamp(.85rem,2vw,1.1rem);font-weight:700;color:#ff4444;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.2rem;position:relative;text-shadow:0 0 15px rgba(255,60,60,.5);text-align:center}
+.secret-title::after{content:'';display:block;width:60px;height:2px;background:#ff4444;margin:.5rem auto 0;box-shadow:0 0 10px rgba(255,60,60,.6)}
+.team-grid{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap}
+.team-card{background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.25);border-radius:12px;padding:1.5rem 2rem;text-align:center;min-width:200px;transition:all .4s;position:relative;overflow:hidden}
+.team-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
+.team-card:hover{background:rgba(0,212,255,.1);box-shadow:0 0 30px rgba(0,212,255,.2);transform:translateY(-4px)}
+.avatar{width:72px;height:72px;border-radius:50%;background:rgba(0,212,255,.08);border:2px solid rgba(0,212,255,.5);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;box-shadow:0 0 20px rgba(0,212,255,.25);transition:all .4s}
+.team-card:hover .avatar{box-shadow:0 0 30px rgba(0,212,255,.5);border-color:var(--cyan)}
+.team-name{font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;color:#fff;margin-bottom:.3rem}
+.team-code{font-size:.7rem;color:rgba(0,212,255,.6);letter-spacing:.1em}
+.team-role{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:.3rem}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;max-width:620px;width:100%}
+.tool-item{background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.2);border-radius:10px;padding:.9rem 1rem;display:flex;align-items:center;gap:.8rem;transition:all .3s}
+.tool-item:hover{background:rgba(0,212,255,.1);border-color:var(--cyan);transform:scale(1.02)}
+.tool-icon{font-size:1.4rem;width:36px;text-align:center}
+.tool-name{font-size:.75rem;font-weight:600;color:#fff}
+.tool-desc{font-size:.65rem;color:rgba(255,255,255,.45);margin-top:2px}
+.budget-wrap{background:rgba(255,40,40,.04);border:1px solid rgba(255,60,60,.25);border-radius:14px;padding:1.2rem 1.5rem;max-width:680px;width:100%}
+.budget-label-top{font-size:.65rem;color:rgba(255,100,100,.6);letter-spacing:.15em;text-align:center;margin-bottom:.9rem;text-transform:uppercase}
+.budget-grid{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center}
+.budget-item{background:rgba(255,60,60,.06);border:1px solid rgba(255,60,60,.2);border-radius:10px;padding:.8rem 1rem;text-align:center;min-width:110px;flex:1;transition:all .3s}
+.budget-item:hover{background:rgba(255,60,60,.12);transform:scale(1.05);box-shadow:0 0 16px rgba(255,60,60,.2)}
+.budget-emoji{font-size:1.8rem;display:block;margin-bottom:.3rem}
+.budget-qty{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;color:#ff6666;display:block}
+.budget-lbl{font-size:.6rem;color:rgba(255,255,255,.45);margin-top:.2rem;letter-spacing:.05em}
+.site-frame{background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.3);border-radius:16px;padding:1.5rem 2.5rem;text-align:center;max-width:560px;width:100%;position:relative;overflow:hidden}
+.site-frame::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--cyan),var(--blue),var(--cyan),transparent)}
+.site-url{font-family:'Orbitron',monospace;font-size:clamp(.65rem,1.5vw,.85rem);color:var(--cyan);letter-spacing:.05em;word-break:break-all;margin:1rem 0;cursor:pointer;transition:all .3s;text-decoration:none;display:block}
+.site-url:hover{text-shadow:0 0 15px var(--cyan)}
+.site-stats{display:flex;gap:2rem;justify-content:center;margin:1.2rem 0}
+.stat-item{text-align:center}
+.stat-num{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;color:var(--cyan);display:block}
+.stat-lab{font-size:.65rem;color:rgba(255,255,255,.4);letter-spacing:.08em;margin-top:2px}
+.final-badge{display:inline-block;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.4);color:var(--cyan);padding:4px 14px;border-radius:20px;font-size:.7rem;letter-spacing:.1em;margin:.2rem}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="slides">
+
+  <div class="slide active" id="slide-0">
+    <svg class="shield-svg" width="90" height="105" viewBox="0 0 90 105" fill="none">
+      <defs><linearGradient id="sg" x1="0" y1="0" x2="90" y2="105" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00d4ff" stop-opacity=".25"/><stop offset="100%" stop-color="#0066ff" stop-opacity=".15"/></linearGradient></defs>
+      <path d="M45 2L85 18V52C85 72 65 92 45 103C25 92 5 72 5 52V18L45 2Z" fill="url(#sg)" stroke="#00d4ff" stroke-width="2"/>
+      <path d="M45 12L78 26V52C78 68 62 86 45 96C28 86 12 68 12 52V26L45 12Z" fill="none" stroke="rgba(0,212,255,0.4)" stroke-width="1"/>
+      <text x="45" y="60" text-anchor="middle" font-family="Orbitron,monospace" font-size="28" font-weight="900" fill="#00d4ff">ИБ</text>
+      <circle cx="45" cy="52" r="30" fill="none" stroke="rgba(0,212,255,0.15)" stroke-width="1" stroke-dasharray="4 3"/>
+    </svg>
+    <p class="hero-sub" style="margin-top:.8rem">Дипломный проект · 2026</p>
+    <h1 class="hero-title">Организация процесса информирования и обучения сотрудников по вопросам информационной безопасности</h1>
+    <div style="margin:.5rem 0"><span class="badge">ИБ-Академия</span><span class="badge">Казахстан · 2026</span></div>
+    <a class="link-pill" href="https://den-dan.github.io/Employee_education/" target="_blank">🔗 den-dan.github.io/Employee_education</a>
+  </div>
+
+  <div class="slide" id="slide-1">
+    <p class="slide-title">Разработчики</p>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="avatar">
+          <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+            <rect x="3" y="5" width="32" height="24" rx="3" stroke="#00d4ff" stroke-width="1.6" fill="none"/>
+            <line x1="3" y1="12" x2="35" y2="12" stroke="#00d4ff" stroke-width="1.2" opacity=".5"/>
+            <circle cx="8" cy="8.5" r="1.2" fill="#ff5f57"/>
+            <circle cx="13" cy="8.5" r="1.2" fill="#febc2e"/>
+            <circle cx="18" cy="8.5" r="1.2" fill="#28c840"/>
+            <polyline points="10,17 14,21 10,25" stroke="#00d4ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <line x1="16" y1="25" x2="24" y2="25" stroke="#00d4ff" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+            <rect x="10" y="32" width="18" height="2.5" rx="1.2" fill="#00d4ff" opacity=".4"/>
+          </svg>
+        </div>
+        <div class="team-name">Утеев Даниэль</div>
+        <div class="team-code">UD-01 // CREATOR</div>
+        <div class="team-role">Разработчик платформы</div>
+      </div>
+      <div class="team-card">
+        <div class="avatar">
+          <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+            <path d="M28 6C24.5 6 22 8.5 22 12C22 13.2 22.4 14.3 23 15.2L8.5 29.5C7.7 30.3 7.7 31.6 8.5 32.4C9.3 33.2 10.6 33.2 11.4 32.4L25.8 18C26.5 18.4 27.3 18.6 28.1 18.6C31.6 18.6 34 16.1 34 12.6C34 11.6 33.8 10.7 33.3 9.9L30.1 13.1L27.2 12.8L26.9 9.9L30.1 6.7C29.4 6.3 28.7 6 28 6Z" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <circle cx="10" cy="31" r="1.5" fill="#00d4ff" opacity=".6"/>
+          </svg>
+        </div>
+        <div class="team-name">Афанасьев Артём</div>
+        <div class="team-code">AA-02 // ASSIST</div>
+        <div class="team-role">Ассистент разработчика</div>
+      </div>
+    </div>
+    <p style="color:rgba(255,255,255,.3);font-size:.75rem;margin-top:2rem;letter-spacing:.1em">ДИПЛОМНАЯ РАБОТА · 2026 · ИБ-АКАДЕМИЯ</p>
+  </div>
+
+  <div class="slide" id="slide-2">
+    <p class="slide-title">Стек технологий</p>
+    <div class="tools-grid">
+      <div class="tool-item"><span class="tool-icon">🌐</span><div><div class="tool-name">HTML5</div><div class="tool-desc">Структура</div></div></div>
+      <div class="tool-item"><span class="tool-icon">🎨</span><div><div class="tool-name">CSS3</div><div class="tool-desc">Стилизация</div></div></div>
+      <div class="tool-item"><span class="tool-icon">⚡</span><div><div class="tool-name">JavaScript</div><div class="tool-desc">Логика</div></div></div>
+      <div class="tool-item"><span class="tool-icon">🗄️</span><div><div class="tool-name">Supabase</div><div class="tool-desc">База данных</div></div></div>
+      <div class="tool-item"><span class="tool-icon">📦</span><div><div class="tool-name">GitHub Pages</div><div class="tool-desc">Хостинг</div></div></div>
+      <div class="tool-item"><span class="tool-icon">🎬</span><div><div class="tool-name">YouTube API</div><div class="tool-desc">Видеомодули</div></div></div>
+      <div class="tool-item"><span class="tool-icon">📱</span><div><div class="tool-name">PWA Ready</div><div class="tool-desc">Адаптивность</div></div></div>
+    </div>
+  </div>
+
+  <div class="slide" id="slide-3">
+    <p class="secret-title">🔴 Засекреченная информация</p>
+    <div class="budget-wrap">
+      <div class="budget-label-top">Бюджет проекта · Гриф: секретно</div>
+      <div class="budget-grid">
+        <div class="budget-item"><span class="budget-emoji">☕</span><span class="budget-qty">20</span><div class="budget-lbl">литров кофе</div></div>
+        <div class="budget-item"><span class="budget-emoji">🍫</span><span class="budget-qty">30</span><div class="budget-lbl">энерг. батончиков</div></div>
+        <div class="budget-item"><span class="budget-emoji">🍩</span><span class="budget-qty">2</span><div class="budget-lbl">пончика</div></div>
+        <div class="budget-item"><span class="budget-emoji">⚡</span><span class="budget-qty">3</span><div class="budget-lbl">энергетика</div></div>
+        <div class="budget-item"><span class="budget-emoji">🥩</span><span class="budget-qty">1</span><div class="budget-lbl">стейк (заслужили)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" id="slide-4">
+    <p class="slide-title">Платформа онлайн</p>
+    <div class="site-frame">
+      <svg width="50" height="58" viewBox="0 0 90 105" fill="none" style="filter:drop-shadow(0 0 12px rgba(0,212,255,0.5))">
+        <path d="M45 2L85 18V52C85 72 65 92 45 103C25 92 5 72 5 52V18L45 2Z" fill="rgba(0,212,255,0.12)" stroke="#00d4ff" stroke-width="2.5"/>
+        <text x="45" y="60" text-anchor="middle" font-family="Orbitron,monospace" font-size="26" font-weight="900" fill="#00d4ff">ИБ</text>
+      </svg>
+      <p style="font-family:'Orbitron',monospace;font-size:.95rem;font-weight:700;color:#fff;margin:.8rem 0 .3rem;letter-spacing:.05em">ИБ-Академия</p>
+      <p style="color:rgba(255,255,255,.4);font-size:.7rem;margin-bottom:.8rem">Информационная безопасность для сотрудников Казахстана</p>
+      <div class="site-stats">
+        <div class="stat-item"><span class="stat-num">6</span><div class="stat-lab">Модулей</div></div>
+        <div class="stat-item"><span class="stat-num">40</span><div class="stat-lab">Вопросов</div></div>
+        <div class="stat-item"><span class="stat-num">5</span><div class="stat-lab">Ролей</div></div>
+        <div class="stat-item"><span class="stat-num">∞</span><div class="stat-lab">Безопасности</div></div>
+      </div>
+      <a class="site-url" href="https://den-dan.github.io/Employee_education/" target="_blank">den-dan.github.io/Employee_education</a>
+    </div>
+    <div style="margin-top:1.2rem;text-align:center">
+      <span class="final-badge">Утеев Даниэль</span>
+      <span class="final-badge">Афанасьев Артём</span>
+      <p style="font-size:.65rem;color:rgba(255,255,255,.25);margin-top:.8rem;letter-spacing:.15em">ДИПЛОМНАЯ РАБОТА · 2026</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav">
+  <button class="nav-btn" onclick="changeSlide(-1)">← Назад</button>
+  <button class="nav-btn" onclick="changeSlide(1)">Далее →</button>
+</div>
+
+<script>
+const TOTAL=5;let cur=0,animating=false;
+function goTo(n){if(animating||n===cur||n<0||n>=TOTAL)return;animating=true;const prev=document.getElementById('slide-'+cur);const next=document.getElementById('slide-'+n);prev.classList.add('exit');prev.classList.remove('active');cur=n;setTimeout(()=>{prev.classList.remove('exit');next.classList.add('active');animating=false;},350);}
+function changeSlide(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')changeSlide(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')changeSlide(-1);});
+const canvas=document.getElementById('stars');const ctx=canvas.getContext('2d');let W,H,stars=[],comets=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+for(let i=0;i<180;i++)stars.push({x:Math.random()*3000,y:Math.random()*2000,r:Math.random()*1.5+.3,a:Math.random()*.8+.2,tw:Math.random()*3+1,tp:Math.random()*Math.PI*2});
+function spawnComet(){const side=Math.random()<.5?0:1;comets.push({x:side?-50:W+50,y:Math.random()*H*.6,vx:(side?1:-1)*(Math.random()*6+4),vy:(Math.random()*2+1),len:Math.random()*120+80,life:0});}
+setInterval(spawnComet,1800);spawnComet();
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.015;
+stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.tw+s.tp);ctx.beginPath();ctx.arc(s.x%(W+10),s.y%(H+10),s.r,0,Math.PI*2);ctx.fillStyle=`rgba(180,220,255,${s.a*tw})`;ctx.fill();});
+comets=comets.filter(c=>{c.x+=c.vx;c.y+=c.vy;c.life++;const fade=Math.min(1,1-c.life/120);const tail=ctx.createLinearGradient(c.x,c.y,c.x-c.vx/Math.abs(c.vx)*c.len,c.y-c.vy/Math.abs(c.vx)*c.len);tail.addColorStop(0,`rgba(0,212,255,${.9*fade})`);tail.addColorStop(.4,`rgba(0,150,255,${.4*fade})`);tail.addColorStop(1,'rgba(0,100,255,0)');ctx.beginPath();ctx.moveTo(c.x,c.y);ctx.lineTo(c.x-c.vx/Math.abs(c.vx)*c.len,c.y-c.vy/Math.abs(c.vx)*c.len);ctx.strokeStyle=tail;ctx.lineWidth=2;ctx.stroke();ctx.beginPath();ctx.arc(c.x,c.y,3,0,Math.PI*2);ctx.fillStyle=`rgba(200,240,255,${fade})`;ctx.fill();return c.life<120&&c.x>-200&&c.x<W+200;});
+ctx.strokeStyle='rgba(0,212,255,0.03)';ctx.lineWidth=.5;for(let gx=0;gx<W;gx+=80){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}for(let gy=0;gy<H;gy+=80){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+requestAnimationFrame(draw);}
+draw();
+</script>
+</body>
+</html>
