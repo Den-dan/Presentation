@@ -98,17 +98,26 @@ canvas#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0}
 .budget-qty{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;color:#ff6666;display:block;text-shadow:0 0 12px rgba(255,100,100,.4)}
 .budget-lbl{font-size:.58rem;color:rgba(255,255,255,.4);margin-top:.15rem;letter-spacing:.05em}
 
-/* OVERLAY — затемнение + надпись */
+/* ── OVERLAY — затемнение + надпись ──
+   Логика:
+   · #ss-overlay — контейнер, по умолчанию скрыт через visibility
+   · При добавлении .show становится visible
+   · #ss-dim: плавно появляется → держится → плавно уходит
+   · #ss-text: появляется чуть позже → держится → уходит синхронно с dim
+   · Через 3.2 с JS убирает класс .show (visibility:hidden снова)
+*/
 #ss-overlay{
   position:fixed;inset:0;z-index:9999;
   pointer-events:none;
-  opacity:0;
+  visibility:hidden;
+}
+#ss-overlay.show{
+  visibility:visible;
 }
 #ss-dim{
   position:absolute;inset:0;
-  background:rgba(0,0,0,.85);
+  background:rgba(0,0,0,.88);
   opacity:0;
-  transition:none;
 }
 #ss-text{
   position:absolute;inset:0;
@@ -125,22 +134,30 @@ canvas#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0}
   paint-order:stroke fill;
   text-shadow:0 0 60px rgba(255,0,0,.9),0 0 120px rgba(255,0,0,.4);
   opacity:0;
-  transition:none;
 }
-#ss-overlay.show #ss-dim{animation:dimAnim 2.6s ease forwards}
-#ss-overlay.show #ss-text{animation:textAnim 2.6s ease forwards}
 
-@keyframes dimAnim{
-  0%  {opacity:0}
-  12% {opacity:1}
-  72% {opacity:1}
-  100%{opacity:0}
+/* Анимации запускаются только при наличии .show */
+#ss-overlay.show #ss-dim{
+  animation:dimAnim 3.0s cubic-bezier(.4,0,.2,1) forwards;
 }
+#ss-overlay.show #ss-text{
+  animation:textAnim 3.0s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+/* dim: появляется быстро (0→8%), держится (8→70%), плавно уходит (70→100%) */
+@keyframes dimAnim{
+  0%   {opacity:0}
+  8%   {opacity:1}
+  70%  {opacity:1}
+  100% {opacity:0}
+}
+
+/* text: появляется с лёгким масштабом (0→10%), держится (10→70%), уходит (70→100%) */
 @keyframes textAnim{
-  0%  {opacity:0;transform:rotate(-22deg) scale(1.06)}
-  12% {opacity:1;transform:rotate(-22deg) scale(1)}
-  72% {opacity:1;transform:rotate(-22deg) scale(1)}
-  100%{opacity:0;transform:rotate(-22deg) scale(1)}
+  0%   {opacity:0;transform:rotate(-22deg) scale(1.1)}
+  10%  {opacity:1;transform:rotate(-22deg) scale(1)}
+  70%  {opacity:1;transform:rotate(-22deg) scale(1)}
+  100% {opacity:0;transform:rotate(-22deg) scale(1)}
 }
 
 /* SITE */
@@ -160,10 +177,199 @@ canvas#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0}
 .site-url:hover{text-shadow:0 0 18px var(--c)}
 .final-badge{display:inline-block;background:rgba(0,212,255,.09);border:1px solid rgba(0,212,255,.35);color:var(--c);padding:4px 13px;border-radius:20px;font-size:.68rem;letter-spacing:.1em;margin:.2rem;transition:all .3s}
 .final-badge:hover{background:rgba(0,212,255,.2);box-shadow:0 0 14px rgba(0,212,255,.3)}
+
+/* ═══════════ PRELOADER ═══════════ */
+#preloader{
+  position:fixed;inset:0;z-index:99999;
+  background:var(--dk);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .9s cubic-bezier(.4,0,.2,1), visibility .9s;
+}
+#preloader.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+#pl-canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.4;}
+
+.pl-shield-wrap{
+  position:relative;
+  width:130px;height:150px;
+  display:flex;align-items:center;justify-content:center;
+  animation:plFloat 3.5s ease-in-out infinite;
+  margin-bottom:1.8rem;
+}
+@keyframes plFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+.pl-ring{
+  position:absolute;border-radius:50%;border:1px solid transparent;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+}
+.pl-ring-1{width:164px;height:164px;
+  border-top-color:rgba(0,212,255,.8);border-right-color:rgba(0,212,255,.25);
+  animation:spinR 2.8s linear infinite;}
+.pl-ring-2{width:206px;height:206px;
+  border-bottom-color:rgba(0,102,255,.65);border-left-color:rgba(0,102,255,.2);
+  animation:spinL 4.2s linear infinite;}
+.pl-ring-3{width:250px;height:250px;
+  border-top-color:rgba(0,212,255,.22);border-right-color:rgba(0,212,255,.08);border-bottom-color:rgba(0,212,255,.18);
+  animation:spinR 9s linear infinite;}
+@keyframes spinR{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes spinL{to{transform:translate(-50%,-50%) rotate(-360deg)}}
+
+/* орбитальная точка на кольце 1 */
+.pl-orb{
+  position:absolute;
+  width:8px;height:8px;border-radius:50%;
+  background:#00d4ff;box-shadow:0 0 14px #00d4ff,0 0 28px rgba(0,212,255,.4);
+  top:50%;left:50%;
+  animation:orbRing 2.8s linear infinite;
+  transform-origin:0 0;
+}
+@keyframes orbRing{
+  from{transform:rotate(0deg) translateX(82px) rotate(0deg)}
+  to  {transform:rotate(360deg) translateX(82px) rotate(-360deg)}
+}
+
+.pl-scan{
+  position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(0,212,255,.85),transparent);
+  box-shadow:0 0 16px rgba(0,212,255,.5);
+  animation:plScan 2.2s ease-in-out infinite;top:0;
+}
+@keyframes plScan{0%{top:0;opacity:0}8%{opacity:1}92%{opacity:.8}100%{top:100%;opacity:0}}
+
+.pl-sysname{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(.72rem,2vw,.96rem);font-weight:700;
+  color:#fff;letter-spacing:.22em;text-align:center;
+  margin-bottom:.3rem;
+}
+.pl-sub{
+  font-size:.63rem;color:rgba(0,212,255,.55);
+  letter-spacing:.18em;text-align:center;margin-bottom:1.5rem;
+}
+
+.pl-terminal{
+  font-family:'Courier New',monospace;font-size:.67rem;
+  color:rgba(0,212,255,.65);letter-spacing:.04em;
+  text-align:left;width:min(340px,82vw);
+  margin-bottom:1.3rem;min-height:6rem;line-height:1.75;
+}
+.pl-terminal .tl{display:block;opacity:0;animation:tlIn .3s ease forwards;}
+.pl-terminal .tl.ok::before{content:'[ OK ] ';color:rgba(40,220,120,.8);}
+.pl-terminal .tl.ld::before{content:'[  >> ] ';color:rgba(0,212,255,.55);}
+.pl-terminal .tl.warn::before{content:'[ !! ] ';color:rgba(255,200,60,.7);}
+@keyframes tlIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+
+.pl-bar-wrap{
+  width:min(340px,82vw);height:5px;
+  background:rgba(0,212,255,.07);
+  border:1px solid rgba(0,212,255,.18);border-radius:4px;overflow:hidden;margin-bottom:.5rem;
+}
+.pl-bar-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,#003dcc,#00d4ff,#00ffcc);
+  border-radius:4px;box-shadow:0 0 10px rgba(0,212,255,.5);
+  transition:width .14s linear;position:relative;
+}
+.pl-bar-fill::after{
+  content:'';position:absolute;right:0;top:0;bottom:0;width:22px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55));
+  animation:bShine .7s ease-in-out infinite;
+}
+@keyframes bShine{0%,100%{opacity:.3}50%{opacity:1}}
+
+.pl-pct{
+  font-family:'Orbitron',monospace;font-size:.68rem;
+  color:rgba(0,212,255,.65);letter-spacing:.12em;
+  text-align:right;width:min(340px,82vw);margin-bottom:1.9rem;
+}
+
+.pl-btn{
+  position:relative;
+  font-family:'Orbitron',monospace;font-size:.88rem;font-weight:700;
+  letter-spacing:.28em;color:#000;
+  background:linear-gradient(135deg,#00d4ff 0%,#0055ff 100%);
+  border:none;padding:14px 54px;border-radius:8px;cursor:pointer;
+  opacity:0;pointer-events:none;
+  transition:transform .22s,box-shadow .22s,opacity .55s ease;
+  box-shadow:0 0 28px rgba(0,212,255,.4);overflow:hidden;
+}
+.pl-btn.ready{opacity:1;pointer-events:all;animation:btnPulse 2.2s ease-in-out infinite;}
+@keyframes btnPulse{
+  0%,100%{box-shadow:0 0 26px rgba(0,212,255,.45),0 0 0 0 rgba(0,212,255,.22)}
+  50%    {box-shadow:0 0 44px rgba(0,212,255,.75),0 0 0 16px rgba(0,212,255,0)}
+}
+.pl-btn:hover{transform:scale(1.07);box-shadow:0 0 58px rgba(0,212,255,.85);}
+.pl-btn:active{transform:scale(.96)}
+.pl-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.32),transparent);
+  transform:translateX(-100%);transition:transform .48s;
+}
+.pl-btn:hover::before{transform:translateX(100%);}
+
+/* угловые декоры */
+.pl-corner{position:absolute;width:22px;height:22px;border-color:rgba(0,212,255,.38);border-style:solid;animation:cPulse 3s ease-in-out infinite;}
+.pl-corner.tl{top:18px;left:18px;border-width:2px 0 0 2px;}
+.pl-corner.tr{top:18px;right:18px;border-width:2px 2px 0 0;animation-delay:.6s}
+.pl-corner.br{bottom:18px;right:18px;border-width:0 2px 2px 0;animation-delay:1.2s}
+.pl-corner.bl{bottom:18px;left:18px;border-width:0 0 2px 2px;animation-delay:1.8s}
+@keyframes cPulse{0%,100%{opacity:.35}50%{opacity:1;border-color:rgba(0,212,255,.9)}}
+/* ════════════════════════════ */
 </style>
 </head>
 <body>
 <canvas id="bg"></canvas>
+
+<!-- ═══════ PRELOADER ═══════ -->
+<div id="preloader">
+  <canvas id="pl-canvas"></canvas>
+  <div class="pl-scan"></div>
+  <div class="pl-corner tl"></div>
+  <div class="pl-corner tr"></div>
+  <div class="pl-corner br"></div>
+  <div class="pl-corner bl"></div>
+
+  <div class="pl-shield-wrap">
+    <div class="pl-ring pl-ring-1"></div>
+    <div class="pl-ring pl-ring-2"></div>
+    <div class="pl-ring pl-ring-3"></div>
+    <div class="pl-orb"></div>
+    <svg width="106" height="124" viewBox="0 0 90 105" fill="none">
+      <defs>
+        <linearGradient id="plsg" x1="0" y1="0" x2="90" y2="105" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00d4ff" stop-opacity=".38"/>
+          <stop offset="100%" stop-color="#0066ff" stop-opacity=".18"/>
+        </linearGradient>
+        <filter id="plglow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="3.5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <path d="M45 2L85 18V52C85 72 65 92 45 103C25 92 5 72 5 52V18L45 2Z"
+            fill="url(#plsg)" stroke="#00d4ff" stroke-width="2.5" filter="url(#plglow)"/>
+      <path d="M45 12L78 26V52C78 68 62 86 45 96C28 86 12 68 12 52V26L45 12Z"
+            fill="none" stroke="rgba(0,212,255,0.38)" stroke-width="1"/>
+      <text x="45" y="62" text-anchor="middle" font-family="Orbitron,monospace"
+            font-size="27" font-weight="900" fill="#00d4ff">ИБ</text>
+      <circle cx="45" cy="52" r="26" fill="none" stroke="rgba(0,212,255,0.14)"
+              stroke-width="1" stroke-dasharray="3 4">
+        <animateTransform attributeName="transform" type="rotate"
+          from="0 45 52" to="360 45 52" dur="10s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
+
+  <p class="pl-sysname">ИБ-АКАДЕМИЯ · SECURE BOOT</p>
+  <p class="pl-sub">ИНИЦИАЛИЗАЦИЯ ЗАЩИЩЁННОЙ СРЕДЫ</p>
+
+  <div class="pl-terminal" id="pl-term"></div>
+
+  <div class="pl-bar-wrap"><div class="pl-bar-fill" id="pl-bar"></div></div>
+  <div class="pl-pct" id="pl-pct">0%</div>
+
+  <button class="pl-btn" id="pl-btn" onclick="startPresentation()">НАЧАТЬ ›</button>
+</div>
+<!-- ══════════════════════════ -->
+
 
 <div id="ss-overlay">
   <div id="ss-dim"></div>
@@ -212,33 +418,25 @@ canvas#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0}
       <div class="team-card">
         <div class="avatar">
           <canvas class="avatar-canvas" id="av0" width="84" height="84"></canvas>
-          <!-- монитор + код SVG поверх canvas -->
           <svg width="46" height="46" viewBox="0 0 46 46" fill="none" style="position:relative;z-index:1;pointer-events:none">
-            <!-- корпус монитора -->
-            <rect x="3" y="4" width="40" height="28" rx="4" stroke="#00d4ff" stroke-width="1.8" fill="rgba(0,212,255,0.07)"/>
-            <!-- шторка тайтлбара -->
-            <rect x="3" y="4" width="40" height="8" rx="4" fill="rgba(0,212,255,0.1)" stroke="none"/>
-            <rect x="3" y="8" width="40" height="4" fill="rgba(0,212,255,0.1)" stroke="none"/>
-            <!-- три точки -->
-            <circle cx="9"  cy="8" r="1.5" fill="#ff5f57"/>
-            <circle cx="15" cy="8" r="1.5" fill="#febc2e"/>
-            <circle cx="21" cy="8" r="1.5" fill="#28c840"/>
-            <!-- угловые скобки кода -->
-            <polyline points="9,18 13,22 9,26" stroke="#00d4ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            <polyline points="23,18 19,22 23,26" stroke="#00d4ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            <!-- слэш -->
-            <line x1="15" y1="27" x2="17" y2="17" stroke="rgba(0,212,255,.55)" stroke-width="1.4" stroke-linecap="round"/>
-            <!-- строки справа -->
-            <line x1="26" y1="19" x2="38" y2="19" stroke="rgba(0,212,255,.35)" stroke-width="1.3" stroke-linecap="round"/>
-            <line x1="26" y1="23" x2="35" y2="23" stroke="rgba(0,212,255,.25)" stroke-width="1.3" stroke-linecap="round"/>
-            <line x1="26" y1="27" x2="37" y2="27" stroke="rgba(0,212,255,.3)"  stroke-width="1.3" stroke-linecap="round"/>
-            <!-- ножка -->
-            <rect x="19" y="32" width="8"  height="3"   rx="1"   fill="rgba(0,212,255,0.3)"/>
-            <rect x="15" y="35" width="16" height="2.5" rx="1.2" fill="rgba(0,212,255,0.2)"/>
-            <!-- мигающий курсор -->
-            <rect x="27" y="27" width="2" height="2.5" rx=".5" fill="#00d4ff">
+            <!-- монитор отцентрован: экран y=3..31, ножка y=31..38, подставка y=38..41 — итого по центру 46x46 -->
+            <rect x="3" y="3" width="40" height="28" rx="4" stroke="#00d4ff" stroke-width="1.8" fill="rgba(0,212,255,0.07)"/>
+            <rect x="3" y="3" width="40" height="8"  rx="4" fill="rgba(0,212,255,0.1)" stroke="none"/>
+            <rect x="3" y="7" width="40" height="4"  fill="rgba(0,212,255,0.1)" stroke="none"/>
+            <circle cx="9"  cy="7" r="1.5" fill="#ff5f57"/>
+            <circle cx="15" cy="7" r="1.5" fill="#febc2e"/>
+            <circle cx="21" cy="7" r="1.5" fill="#28c840"/>
+            <polyline points="9,17 13,21 9,25"  stroke="#00d4ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <polyline points="23,17 19,21 23,25" stroke="#00d4ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <line x1="15" y1="26" x2="17" y2="16" stroke="rgba(0,212,255,.55)" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="26" y1="18" x2="38" y2="18" stroke="rgba(0,212,255,.35)" stroke-width="1.3" stroke-linecap="round"/>
+            <line x1="26" y1="22" x2="35" y2="22" stroke="rgba(0,212,255,.25)" stroke-width="1.3" stroke-linecap="round"/>
+            <line x1="26" y1="26" x2="37" y2="26" stroke="rgba(0,212,255,.3)"  stroke-width="1.3" stroke-linecap="round"/>
+            <rect x="27" y="26" width="2" height="2.5" rx=".5" fill="#00d4ff">
               <animate attributeName="opacity" values="1;0;1" dur=".9s" repeatCount="indefinite"/>
             </rect>
+            <rect x="19" y="31" width="8"   height="3"   rx="1"   fill="rgba(0,212,255,0.3)"/>
+            <rect x="15" y="34" width="16"  height="2.5" rx="1.2" fill="rgba(0,212,255,0.2)"/>
           </svg>
         </div>
         <div class="team-name">Утеев Даниэль</div>
@@ -250,15 +448,11 @@ canvas#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0}
       <div class="team-card">
         <div class="avatar">
           <canvas class="avatar-canvas" id="av1" width="84" height="84"></canvas>
-          <!-- щит + DNA/сеть SVG поверх canvas -->
           <svg width="46" height="46" viewBox="0 0 46 46" fill="none" style="position:relative;z-index:1;pointer-events:none">
-            <!-- щит -->
             <path d="M23 3L41 10V22C41 33 32 40 23 44C14 40 5 33 5 22V10L23 3Z"
                   fill="rgba(0,212,255,0.07)" stroke="#00d4ff" stroke-width="1.8" stroke-linejoin="round"/>
-            <!-- внутренний контур -->
             <path d="M23 8L37 14V22C37 31 29 37 23 41C17 37 9 31 9 22V14L23 8Z"
                   fill="none" stroke="rgba(0,212,255,0.28)" stroke-width="1" stroke-linejoin="round"/>
-            <!-- молния -->
             <path d="M27 13L19 24H24.5L21 34L30 22H24.5L27 13Z"
                   fill="#00d4ff" fill-opacity=".85" stroke="#00d4ff" stroke-width=".4" stroke-linejoin="round"/>
           </svg>
@@ -354,10 +548,12 @@ for(let i=0;i<TOTAL;i++){
 function updateDots(){dotsEl.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));}
 
 function showSecretOverlay(){
+  /* Сбрасываем класс, форсируем reflow чтобы CSS-анимации стартовали заново */
   ssOverlay.classList.remove('show');
-  void ssOverlay.offsetWidth;
+  void ssOverlay.offsetWidth;           // force reflow — без этого браузер не перезапустит анимацию
   ssOverlay.classList.add('show');
-  setTimeout(()=>ssOverlay.classList.remove('show'),2700);
+  /* Убираем класс чуть позже окончания анимации (3.0 с) */
+  setTimeout(() => ssOverlay.classList.remove('show'), 3100);
 }
 
 function goTo(n){
@@ -391,43 +587,95 @@ function countUp(){
 
 /* ── AVATAR CANVAS ANIMATIONS ── */
 
-/* Avatar 0 — Даниэль: матрица символов + пульс */
+/* Avatar 0 — Даниэль: матрица сверху вниз (японские + спец символы) */
 (function(){
   const cv=document.getElementById('av0');
   if(!cv)return;
   const ctx=cv.getContext('2d');
   const W=84,H=84,R=42;
-  const chars='01{};<>/=+-*#'.split('');
-  const cols=Math.floor(W/8);
-  const drops=Array.from({length:cols},()=>-Math.random()*H/8|0);
-  let t=0;
-  function frame(){
-    /* circular clip */
+  /* японские катакана + цифры + спецсимволы — настоящая матрица */
+  const chars=(
+    'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン' +
+    '0123456789#$%&*<>[]{}|+-=~^'
+  ).split('');
+  const CELL=8;                              // ширина/высота ячейки
+  const cols=Math.floor(W/CELL);            // 10 колонн
+  /* для каждой колонны: текущая позиция головы (в ячейках), скорость */
+  const drops=Array.from({length:cols},(_,i)=>({
+    y: -(Math.random()*12|0),               // стартуют вне экрана сверху
+    speed: .4+Math.random()*.6,             // разные скорости
+    len: 5+Math.random()*6|0,              // длина «хвоста» (кол-во символов)
+  }));
+  /* буфер символов — каждая ячейка хранит свой рандомный символ */
+  const buf=Array.from({length:cols},()=>
+    Array.from({length:Math.ceil(H/CELL)+2},()=>chars[Math.random()*chars.length|0])
+  );
+  /* иногда меняем символ в буфере для "мерцания" */
+  function mutate(){
+    const c=Math.random()*cols|0;
+    const r=Math.random()*(H/CELL)|0;
+    buf[c][r]=chars[Math.random()*chars.length|0];
+  }
+
+  let acc=0, last=0, t=0;
+  function frame(ts){
+    const dt=Math.min(ts-last,50); last=ts;
+    acc+=dt;
+    /* шаг анимации ~60мс — не каждый кадр сдвигаем, так медленнее и читабельнее */
+    const step=acc>60;
+    if(step) acc=0;
+
     ctx.clearRect(0,0,W,H);
     ctx.save();
     ctx.beginPath();ctx.arc(R,R,R,0,Math.PI*2);ctx.clip();
-    /* dim trail */
-    ctx.fillStyle='rgba(3,10,26,.45)';ctx.fillRect(0,0,W,H);
-    /* matrix chars */
-    ctx.font='7px monospace';
-    drops.forEach((y,i)=>{
-      const ch=chars[Math.random()*chars.length|0];
-      const bright=Math.random()>.85;
-      ctx.fillStyle=bright?'rgba(200,255,255,.95)':`rgba(0,212,255,${.25+Math.random()*.4})`;
-      ctx.fillText(ch,i*8+1,y*8);
-      if(y*8>H&&Math.random()>.92) drops[i]=0;
-      else drops[i]++;
+
+    /* фон с затуханием — создаёт след */
+    ctx.fillStyle='rgba(3,10,26,.55)';
+    ctx.fillRect(0,0,W,H);
+
+    ctx.font=`bold ${CELL-1}px monospace`;
+    ctx.textAlign='center';
+
+    drops.forEach((d,ci)=>{
+      const headY=Math.floor(d.y);
+      for(let row=0;row<d.len;row++){
+        const ry=headY-row;
+        if(ry<0||ry>H/CELL) continue;
+        const fade=1-row/d.len;             // голова яркая, хвост тускнеет
+        const isHead=row===0;
+        if(isHead){
+          /* голова — белая/голубая вспышка */
+          ctx.fillStyle=`rgba(200,255,255,${.9*fade})`;
+        } else {
+          ctx.fillStyle=`rgba(0,212,255,${(.7*fade)})`;
+        }
+        const ch=buf[ci][((ry%buf[ci].length)+buf[ci].length)%buf[ci].length];
+        ctx.fillText(ch, ci*CELL+CELL/2, ry*CELL+CELL-1);
+      }
+      if(step){
+        d.y+=d.speed;
+        if(d.y-d.len>H/CELL){              // хвост ушёл за низ — сброс
+          d.y=-(2+Math.random()*8|0);
+          d.speed=.35+Math.random()*.65;
+          d.len=4+Math.random()*7|0;
+        }
+      }
     });
-    /* pulse ring */
+
+    /* мерцание отдельных символов */
+    if(Math.random()>.7) mutate();
+
+    /* пульсирующее кольцо */
     t+=.05;
     const pulse=.5+.5*Math.sin(t);
-    ctx.beginPath();ctx.arc(R,R,R-2,0,Math.PI*2);
-    ctx.strokeStyle=`rgba(0,212,255,${.15+.25*pulse})`;
-    ctx.lineWidth=2+pulse*2;ctx.stroke();
+    ctx.beginPath();ctx.arc(R,R,R-1.5,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(0,212,255,${.1+.2*pulse})`;
+    ctx.lineWidth=1.5+pulse*1.5;ctx.stroke();
+
     ctx.restore();
     requestAnimationFrame(frame);
   }
-  frame();
+  requestAnimationFrame(frame);
 })();
 
 /* Avatar 1 — Артём: сеть нейронов / орбиты */
@@ -436,14 +684,12 @@ function countUp(){
   if(!cv)return;
   const ctx=cv.getContext('2d');
   const W=84,H=84,R=42;
-  /* fixed nodes on a circle */
   const N=8;
   const nodes=Array.from({length:N},(_, i)=>{
     const a=i/N*Math.PI*2;
     const r=24+Math.random()*8;
     return {bx:R+r*Math.cos(a), by:R+r*Math.sin(a), phase:Math.random()*Math.PI*2, speed:.4+Math.random()*.5};
   });
-  /* center node */
   nodes.push({bx:R,by:R,phase:0,speed:.3});
   let t=0;
   function getPos(n){
@@ -458,7 +704,6 @@ function countUp(){
     ctx.fillStyle='rgba(3,10,26,.15)';ctx.fillRect(0,0,W,H);
     t+=.018;
     const pts=nodes.map(getPos);
-    /* edges */
     for(let i=0;i<pts.length;i++){
       for(let j=i+1;j<pts.length;j++){
         const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
@@ -470,16 +715,13 @@ function countUp(){
         }
       }
     }
-    /* nodes */
     pts.forEach((p,i)=>{
       const pulse=.5+.5*Math.sin(t*2+i);
       ctx.beginPath();ctx.arc(p.x,p.y,i===N?3.5:2.2,0,Math.PI*2);
       ctx.fillStyle=`rgba(0,212,255,${.6+.4*pulse})`;ctx.fill();
-      /* glow */
       ctx.beginPath();ctx.arc(p.x,p.y,i===N?6:4,0,Math.PI*2);
       ctx.fillStyle=`rgba(0,212,255,${.1*pulse})`;ctx.fill();
     });
-    /* outer orbit ring */
     ctx.beginPath();ctx.arc(R,R,R-2,0,Math.PI*2);
     ctx.strokeStyle=`rgba(0,212,255,${.12+.08*Math.sin(t)})`;ctx.lineWidth=1.5;ctx.stroke();
     ctx.restore();
@@ -510,6 +752,77 @@ function draw(){
   requestAnimationFrame(draw);
 }
 draw();
+
+/* ═══════ PRELOADER LOGIC ═══════ */
+(function(){
+  const term  = document.getElementById('pl-term');
+  const bar   = document.getElementById('pl-bar');
+  const pctEl = document.getElementById('pl-pct');
+  const btn   = document.getElementById('pl-btn');
+  const plCv  = document.getElementById('pl-canvas');
+  const plCtx = plCv.getContext('2d');
+  const loader= document.getElementById('preloader');
+
+  /* hex-rain на канвасе прелоадера */
+  let PW, PH;
+  function plResize(){PW=plCv.width=window.innerWidth;PH=plCv.height=window.innerHeight;}
+  plResize(); window.addEventListener('resize', plResize);
+  const hexCh='0123456789ABCDEF'.split('');
+  const plCols=Math.ceil(window.innerWidth/13);
+  const plDrops=Array.from({length:plCols},()=>-(Math.random()*60|0));
+  function plFrame(){
+    plCtx.fillStyle='rgba(3,10,26,.17)';plCtx.fillRect(0,0,PW,PH);
+    plCtx.font='11px monospace';
+    plDrops.forEach((y,i)=>{
+      const ch=hexCh[Math.random()*16|0];
+      const bright=Math.random()>.9;
+      plCtx.fillStyle=bright?'rgba(0,255,210,.88)':`rgba(0,212,255,${.1+Math.random()*.18})`;
+      plCtx.fillText(ch, i*13, y*13);
+      if(y*13>PH && Math.random()>.94) plDrops[i]=0; else plDrops[i]++;
+    });
+    requestAnimationFrame(plFrame);
+  }
+  plFrame();
+
+  /* терминальные строки */
+  const lines=[
+    {cls:'ld',  ms:0,    txt:'Загрузка модуля аутентификации...'},
+    {cls:'ok',  ms:650,  txt:'Ключи шифрования RSA-4096 сгенерированы'},
+    {cls:'ld',  ms:1200, txt:'Проверка целостности пакетов...'},
+    {cls:'warn',ms:1900, txt:'Обнаружены устаревшие протоколы TLS 1.0'},
+    {cls:'ok',  ms:2500, txt:'Патч безопасности v2.6.1 применён'},
+    {cls:'ld',  ms:3050, txt:'Инициализация учебной платформы...'},
+    {cls:'ok',  ms:3750, txt:'Система готова · Добро пожаловать'},
+  ];
+  lines.forEach(l=>{
+    setTimeout(()=>{
+      const s=document.createElement('span');
+      s.className='tl '+l.cls;
+      s.textContent=l.txt;
+      term.appendChild(s);
+      term.scrollTop=term.scrollHeight;
+    }, l.ms);
+  });
+
+  /* прогресс-бар 0→100 за ~4.4 с */
+  const TOTAL_MS=4400;
+  const startT=performance.now();
+  function tick(now){
+    const pct=Math.min(100, Math.round((now-startT)/TOTAL_MS*100));
+    bar.style.width=pct+'%';
+    pctEl.textContent=pct+'%';
+    if(pct<100) requestAnimationFrame(tick);
+    else btn.classList.add('ready');
+  }
+  requestAnimationFrame(tick);
+
+  /* старт */
+  window.startPresentation=function(){
+    loader.classList.add('hidden');
+  };
+})();
+/* ════════════════════════════════ */
+
 </script>
 </body>
 </html>
