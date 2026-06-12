@@ -3,789 +3,2627 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Cstyle%3Epath%7Bstroke:%23111%7D%40media(prefers-color-scheme:dark)%7Bpath%7Bstroke:%23fff%7D%7D%3C/style%3E%3Cpath d='M16 2L4 7V16C4 23 10 28.5 16 31C22 28.5 28 23 28 16V7L16 2Z' fill='none' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M11 16.5L14.5 20L21 13' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<title>ИБ-Академия — Дипломный проект 2026</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2309090f'/%3E%3Crect x='1' y='1' width='62' height='62' rx='13' fill='none' stroke='%237c6af7' stroke-width='1' opacity='0.6'/%3E%3Ctext x='32' y='44' font-family='monospace' font-size='28' font-weight='700' text-anchor='middle' fill='%23a78bfa'%3EDU%3C/text%3E%3Ccircle cx='50' cy='50' r='6' fill='%234ade80'/%3E%3Ccircle cx='50' cy='50' r='3' fill='%2309090f'/%3E%3C/svg%3E">
+<title>Даниэль Утеев · PO-231 · Авторство</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap');
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--c:#00d4ff;--b:#0066ff;--dk:#030a1a;--red:#ff3c3c}
-html,body{width:100%;height:100vh;overflow:hidden;background:var(--dk);font-family:'Exo 2',sans-serif;font-size:19px}
-canvas#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
-.slides{position:relative;z-index:10;width:100%;height:100vh;overflow:hidden}
-.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 2.5rem;opacity:0;pointer-events:none;will-change:transform,opacity}
-.slide.active{opacity:1;pointer-events:all}
-.slide.entering{animation:slideIn .6s cubic-bezier(.22,1,.36,1) forwards}
-.slide.leaving{animation:slideOut .45s cubic-bezier(.4,0,1,1) forwards}
-@keyframes slideIn{from{opacity:0;transform:translateY(48px) scale(.97)}to{opacity:1;transform:none}}
-@keyframes slideOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-48px) scale(.97)}}
+:root {
+  --bg: #09090f;
+  --surface: #111118;
+  --surface2: #16161f;
+  --accent: #7c6af7;
+  --accent2: #a78bfa;
+  --green: #4ade80;
+  --amber: #fbbf24;
+  --red: #f87171;
+  --text: #e2e8f0;
+  --text-dim: #64748b;
+  --border: rgba(124,106,247,0.18);
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+}
 
-.nav{position:fixed;bottom:1.6rem;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:200;align-items:center}
-.nav-btn{position:relative;overflow:hidden;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.4);color:var(--c);padding:10px 28px;border-radius:8px;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:14px;letter-spacing:.08em;transition:all .25s}
-.nav-btn:hover{background:rgba(0,212,255,.22);box-shadow:0 0 18px rgba(0,212,255,.3);transform:scale(1.04)}
-.nav-btn:active{transform:scale(.97)}
-.dots{display:flex;gap:8px;align-items:center}
-.dot{width:9px;height:9px;border-radius:50%;background:rgba(0,212,255,.22);border:1px solid rgba(0,212,255,.4);transition:all .3s;cursor:pointer}
-.dot.on{background:var(--c);box-shadow:0 0 10px rgba(0,212,255,.6);transform:scale(1.2)}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* HERO */
-.shield-wrap{position:relative;animation:floatY 4s ease-in-out infinite}
-@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.shield-glow{position:absolute;inset:-20px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,.18) 0%,transparent 70%);animation:glowPulse 3s ease-in-out infinite;pointer-events:none}
-@keyframes glowPulse{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.18)}}
-.hero-title{font-family:'Orbitron',monospace;font-size:clamp(.95rem,2.5vw,1.45rem);font-weight:900;color:#fff;text-align:center;max-width:780px;line-height:1.35;margin:.8rem 0 .4rem;text-shadow:0 0 40px rgba(0,212,255,.35)}
-.hero-sub{font-size:.75rem;color:rgba(0,212,255,.75);letter-spacing:.18em;text-transform:uppercase;font-weight:300}
-.badge{display:inline-block;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.35);color:var(--c);padding:4px 14px;border-radius:20px;font-size:.7rem;letter-spacing:.1em;font-weight:600;margin:.2rem;animation:badgePop .5s ease both}
-@keyframes badgePop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
-.link-pill{background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(0,102,255,.12));border:1px solid rgba(0,212,255,.5);color:var(--c);padding:9px 22px;border-radius:26px;font-size:.78rem;letter-spacing:.05em;cursor:pointer;margin-top:.9rem;transition:all .3s;display:inline-block;text-decoration:none;position:relative;overflow:hidden}
-.link-pill::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,212,255,.15),transparent);transition:left .5s}
-.link-pill:hover::before{left:100%}
-.link-pill:hover{box-shadow:0 0 26px rgba(0,212,255,.4);border-color:var(--c)}
+html { scroll-behavior: smooth; }
 
-.slide-title{font-family:'Orbitron',monospace;font-size:clamp(.8rem,2vw,1rem);font-weight:700;color:var(--c);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.8rem;text-align:center;position:relative}
-.slide-title::after{content:'';display:block;width:0;height:2px;background:var(--c);margin:.45rem auto 0;box-shadow:0 0 8px var(--c);animation:underlineGrow 1s .3s ease forwards}
-@keyframes underlineGrow{from{width:0}to{width:60px}}
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
 
-/* TEAM */
-.team-grid{display:flex;gap:2.5rem;justify-content:center;flex-wrap:wrap}
-.team-card{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.2);border-radius:16px;padding:2rem 2.6rem;text-align:center;min-width:220px;transition:all .4s;position:relative;overflow:hidden;animation:cardAppear .6s ease both}
-.team-card:nth-child(2){animation-delay:.15s}
-@keyframes cardAppear{from{opacity:0;transform:translateY(24px) scale(.95)}to{opacity:1;transform:none}}
-.team-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.6}
-.team-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(0,212,255,.06),transparent 70%);opacity:0;transition:opacity .4s}
-.team-card:hover::after{opacity:1}
-.team-card:hover{background:rgba(0,212,255,.09);box-shadow:0 0 40px rgba(0,212,255,.18);transform:translateY(-6px)}
-.team-card:first-child{border-color:rgba(0,212,255,.42)}
-.team-card:first-child::before{opacity:1}
+/* ── HEADER ── */
+header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  background: rgba(9,9,15,0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2.5rem;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-.avatar{width:84px;height:84px;border-radius:50%;background:rgba(0,212,255,.06);border:2px solid rgba(0,212,255,.45);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;box-shadow:0 0 22px rgba(0,212,255,.2);transition:all .4s;position:relative;overflow:hidden}
-.team-card:hover .avatar{box-shadow:0 0 38px rgba(0,212,255,.5);border-color:var(--c)}
-.team-card:first-child .avatar{border-color:rgba(0,212,255,.7);box-shadow:0 0 28px rgba(0,212,255,.35)}
+.header-logo {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent2);
+  letter-spacing: 0.5px;
+}
 
-.avatar-canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:50%}
+.header-nav {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
 
-.team-name{font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;color:#fff;margin-bottom:.25rem}
-.team-code{font-size:.68rem;color:rgba(0,212,255,.55);letter-spacing:.12em}
-.team-role{font-size:.68rem;color:rgba(255,255,255,.45);margin-top:.3rem;font-style:italic}
+.header-nav a {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  text-decoration: none;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
 
-/* STACK */
-.tools-wrap{display:flex;flex-direction:column;gap:.85rem;align-items:center;width:100%;max-width:680px}
-.tools-row{display:flex;gap:.85rem;justify-content:center}
-.tool-item{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.18);border-radius:12px;padding:1rem 1.1rem;display:flex;align-items:center;gap:.85rem;transition:all .3s;animation:toolIn .5s ease both;position:relative;overflow:hidden;width:155px;flex-shrink:0}
-.tool-item::after{content:'';position:absolute;bottom:0;left:0;height:2px;width:0;background:var(--c);transition:width .35s;box-shadow:0 0 8px var(--c)}
-.tool-item:hover::after{width:100%}
-.tool-item:nth-child(1){animation-delay:.05s}.tool-item:nth-child(2){animation-delay:.1s}.tool-item:nth-child(3){animation-delay:.15s}.tool-item:nth-child(4){animation-delay:.2s}
-.tools-row:nth-child(2) .tool-item:nth-child(1){animation-delay:.25s}.tools-row:nth-child(2) .tool-item:nth-child(2){animation-delay:.3s}.tools-row:nth-child(2) .tool-item:nth-child(3){animation-delay:.35s}
-@keyframes toolIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
-.tool-item:hover{background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.5);transform:translateY(-3px) scale(1.03);box-shadow:0 6px 24px rgba(0,212,255,.15)}
-.tool-icon{font-size:1.5rem;width:34px;text-align:center;flex-shrink:0}
-.tool-name{font-size:.75rem;font-weight:600;color:#fff}
-.tool-desc{font-size:.62rem;color:rgba(255,255,255,.4);margin-top:2px}
+.header-nav a:hover { color: var(--accent2); }
 
-/* GLITCH HERO TITLE */
-.hero-title{position:relative;cursor:default}
-.hero-title:hover{animation:glitchShake .35s steps(2,end) 2}
-.hero-title::before,.hero-title::after{content:attr(data-text);position:absolute;inset:0;opacity:0;color:#fff}
-.hero-title:hover::before{opacity:.7;color:#0ff;clip-path:inset(0 0 60% 0);animation:glitchTop .35s steps(2,end) 2;transform:translate(-2px,-1px)}
-.hero-title:hover::after{opacity:.7;color:#f0f;clip-path:inset(60% 0 0 0);animation:glitchBot .35s steps(2,end) 2;transform:translate(2px,1px)}
-@keyframes glitchShake{0%,100%{transform:translate(0,0)}25%{transform:translate(-1px,1px)}50%{transform:translate(1px,-1px)}75%{transform:translate(-1px,-1px)}}
-@keyframes glitchTop{0%,100%{transform:translate(-2px,-1px)}50%{transform:translate(2px,-2px)}}
-@keyframes glitchBot{0%,100%{transform:translate(2px,1px)}50%{transform:translate(-2px,2px)}}
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7rem 2rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
 
-/* TILT (3D hover) */
-.team-card,.tool-item,.site-frame,.budget-item{transform-style:preserve-3d;will-change:transform}
-.tilt-glare{position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(0,212,255,.18),transparent 55%);opacity:0;transition:opacity .3s;z-index:2}
-.team-card:hover .tilt-glare,.tool-item:hover .tilt-glare,.site-frame:hover .tilt-glare{opacity:1}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 30% 40%, rgba(124,106,247,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 75% 70%, rgba(74,222,128,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
 
-/* TYPEWRITER */
-.typewriter{display:inline-block;border-right:2px solid var(--c);padding-right:4px;animation:caretBlink .8s step-end infinite}
-@keyframes caretBlink{50%{border-color:transparent}}
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(124,106,247,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,106,247,0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
 
-/* CURSOR TRAIL CANVAS */
-#cursor-fx{position:fixed;inset:0;z-index:5000;pointer-events:none}
+.hero-inner {
+  position: relative;
+  max-width: 820px;
+  width: 100%;
+  text-align: center;
+}
 
-/* SCROLL-PROGRESS */
-#progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--b),var(--c),#00ffcc);box-shadow:0 0 12px var(--c);z-index:300;transition:width .5s cubic-bezier(.22,1,.36,1)}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green);
+  border: 1px solid rgba(74,222,128,0.3);
+  background: rgba(74,222,128,0.06);
+  padding: 0.4rem 1rem;
+  border-radius: 2px;
+  margin-bottom: 2rem;
+  animation: float-up 3s ease-in-out infinite;
+}
 
-/* RIPPLE on nav buttons */
-.nav-btn{position:relative;overflow:hidden}
-.ripple{position:absolute;border-radius:50%;background:rgba(0,212,255,.45);transform:scale(0);animation:rippleAnim .6s ease-out forwards;pointer-events:none}
-@keyframes rippleAnim{to{transform:scale(4);opacity:0}}
+.hero-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
 
-/* SHIMMER text for badges */
-.badge,.final-badge{background-size:200% 100%;animation:badgePop .5s ease both, shimmerBg 4s linear infinite}
-@keyframes shimmerBg{0%{background-position:0% 0}100%{background-position:200% 0}}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.4; transform:scale(0.7); }
+}
 
-/* MAGNETIC LINK PILL pulse ring */
-.link-pill{position:relative}
-.link-pill::after{content:'';position:absolute;inset:-6px;border:1px solid rgba(0,212,255,.35);border-radius:30px;opacity:0;animation:pillRing 2.4s ease-out infinite}
-@keyframes pillRing{0%{opacity:.6;transform:scale(.95)}100%{opacity:0;transform:scale(1.25)}}
+.hero-title {
+  font-size: clamp(2.2rem, 5.5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 1.2rem;
+  color: #fff;
+  background: linear-gradient(135deg, #fff 0%, #a78bfa 40%, #7c6af7 60%, #4ade80 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: hero-glow-shift 6s ease infinite;
+}
 
-/* SECRET slide */
-.secret-title{font-family:'Orbitron',monospace;font-size:clamp(.8rem,1.8vw,.98rem);font-weight:700;color:var(--red);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.2rem;text-align:center;animation:redBlink 2.5s ease-in-out infinite}
-@keyframes redBlink{0%,100%{text-shadow:0 0 12px rgba(255,60,60,.4)}50%{text-shadow:0 0 30px rgba(255,60,60,.8),0 0 60px rgba(255,60,60,.3)}}
-.secret-title::after{content:'';display:block;width:60px;height:2px;background:var(--red);margin:.45rem auto 0;box-shadow:0 0 10px rgba(255,60,60,.6)}
-.budget-wrap{background:rgba(255,40,40,.04);border:1px solid rgba(255,60,60,.22);border-radius:16px;padding:1.2rem 1.4rem;max-width:660px;width:100%;position:relative;overflow:hidden}
-.budget-label-top{font-size:.62rem;color:rgba(255,100,100,.55);letter-spacing:.17em;text-align:center;margin-bottom:.9rem;text-transform:uppercase}
-.budget-grid{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center}
-.budget-item{background:rgba(255,60,60,.05);border:1px solid rgba(255,60,60,.18);border-radius:12px;padding:.8rem 1rem;text-align:center;min-width:106px;flex:1;transition:all .3s;animation:budgetIn .5s ease both}
-.budget-item:nth-child(1){animation-delay:.1s}.budget-item:nth-child(2){animation-delay:.2s}.budget-item:nth-child(3){animation-delay:.3s}.budget-item:nth-child(4){animation-delay:.4s}.budget-item:nth-child(5){animation-delay:.5s}
-@keyframes budgetIn{from{opacity:0;transform:rotateY(25deg) scale(.8)}to{opacity:1;transform:none}}
-.budget-item:hover{background:rgba(255,60,60,.12);transform:scale(1.06) translateY(-3px);box-shadow:0 0 22px rgba(255,60,60,.2)}
-.budget-emoji{font-size:1.7rem;display:block;margin-bottom:.25rem}
-.budget-qty{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;color:#ff6666;display:block;text-shadow:0 0 12px rgba(255,100,100,.4)}
-.budget-lbl{font-size:.58rem;color:rgba(255,255,255,.4);margin-top:.15rem;letter-spacing:.05em}
+.hero-title .accent { color: var(--accent2); }
 
-/* ── OVERLAY ── */
-#ss-overlay{position:fixed;inset:0;z-index:9999;pointer-events:none;visibility:hidden;}
-#ss-overlay.show{visibility:visible;}
-#ss-dim{position:absolute;inset:0;background:rgba(0,0,0,.88);opacity:0;}
-#ss-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:clamp(3rem,9vw,7rem);font-weight:400;color:#ff1a1a;letter-spacing:.14em;text-align:center;line-height:1.15;transform:rotate(-22deg);-webkit-text-stroke:3px #000;paint-order:stroke fill;text-shadow:0 0 60px rgba(255,0,0,.9),0 0 120px rgba(255,0,0,.4);opacity:0;}
-#ss-overlay.show #ss-dim{animation:dimAnim 3.0s cubic-bezier(.4,0,.2,1) forwards;}
-#ss-overlay.show #ss-text{animation:textAnim 3.0s cubic-bezier(.4,0,.2,1) forwards;}
-@keyframes dimAnim{0%{opacity:0}8%{opacity:1}70%{opacity:1}100%{opacity:0}}
-@keyframes textAnim{0%{opacity:0;transform:rotate(-22deg) scale(1.1)}10%{opacity:1;transform:rotate(-22deg) scale(1)}70%{opacity:1;transform:rotate(-22deg) scale(1)}100%{opacity:0;transform:rotate(-22deg) scale(1)}}
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 0 auto 2.5rem;
+}
 
-/* ══════════ GOALS SLIDE ══════════ */
-.goals-wrap{display:flex;flex-direction:column;gap:.75rem;width:100%;max-width:720px}
-.goal-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
-.goal-card{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.18);border-radius:14px;padding:1rem 1.2rem;display:flex;align-items:flex-start;gap:.9rem;position:relative;overflow:hidden;transition:all .35s;animation:goalIn .55s ease both}
-.goal-card:nth-child(1){animation-delay:.06s}
-.goal-card:nth-child(2){animation-delay:.14s}
-.goal-row:nth-child(2) .goal-card:nth-child(1){animation-delay:.22s}
-.goal-row:nth-child(2) .goal-card:nth-child(2){animation-delay:.30s}
-.goal-card-wide{grid-column:1/-1;animation-delay:.38s!important}
-@keyframes goalIn{from{opacity:0;transform:translateY(20px) scale(.95)}to{opacity:1;transform:none}}
-.goal-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:0;transition:opacity .35s}
-.goal-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--gx,50%) var(--gy,40%),rgba(0,212,255,.07),transparent 65%);opacity:0;transition:opacity .35s}
-.goal-card:hover{background:rgba(0,212,255,.09);border-color:rgba(0,212,255,.45);transform:translateY(-4px) scale(1.02);box-shadow:0 8px 32px rgba(0,212,255,.14)}
-.goal-card:hover::before{opacity:1}
-.goal-card:hover::after{opacity:1}
-.goal-icon-wrap{width:40px;height:40px;border-radius:10px;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;transition:all .35s}
-.goal-card:hover .goal-icon-wrap{background:rgba(0,212,255,.15);box-shadow:0 0 18px rgba(0,212,255,.2);border-color:rgba(0,212,255,.5)}
-.goal-body{flex:1;min-width:0}
-.goal-title{font-family:'Orbitron',monospace;font-size:.67rem;font-weight:700;color:#fff;letter-spacing:.06em;margin-bottom:.28rem;line-height:1.3}
-.goal-desc{font-size:.62rem;color:rgba(255,255,255,.38);line-height:1.55}
-/* сканирующая линия на карточке — появляется при ховере */
-.goal-scan{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.55),transparent);top:50%;opacity:0;transition:opacity .2s}
-.goal-card:hover .goal-scan{opacity:1;animation:goalScan 1.4s ease-in-out infinite}
-@keyframes goalScan{0%{top:0%}100%{top:100%}}
-/* ══════════════════════════════════ */
+.hero-meta {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
 
-/* SITE */
-.site-frame{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.28);border-radius:18px;padding:1.5rem 2.5rem;text-align:center;max-width:520px;width:100%;position:relative;overflow:hidden;animation:framePop .7s cubic-bezier(.22,1,.36,1)}
-@keyframes framePop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
-.site-frame::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--c),var(--b),var(--c),transparent)}
-.site-frame::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,212,255,.07),transparent 60%);pointer-events:none}
-.site-stats{display:flex;gap:1.8rem;justify-content:center;margin:1.2rem 0}
-.stat-item{text-align:center;animation:statPop .5s ease both}
-.stat-item:nth-child(1){animation-delay:.1s}.stat-item:nth-child(2){animation-delay:.2s}.stat-item:nth-child(3){animation-delay:.3s}.stat-item:nth-child(4){animation-delay:.4s}
-@keyframes statPop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.stat-num{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;color:var(--c);display:block;text-shadow:0 0 15px rgba(0,212,255,.4)}
-.stat-lab{font-size:.62rem;color:rgba(255,255,255,.38);letter-spacing:.08em;margin-top:2px}
-.site-url{font-family:'Orbitron',monospace;font-size:clamp(.58rem,1.4vw,.78rem);color:var(--c);letter-spacing:.04em;word-break:break-all;margin:.8rem 0;cursor:pointer;transition:all .3s;text-decoration:none;display:block;position:relative;z-index:1}
-.site-url::after{content:'';display:block;height:1px;background:var(--c);width:0;margin:.15rem auto 0;transition:width .4s;box-shadow:0 0 6px var(--c)}
-.site-url:hover::after{width:100%}
-.site-url:hover{text-shadow:0 0 18px var(--c)}
-.final-badge{display:inline-block;background:rgba(0,212,255,.09);border:1px solid rgba(0,212,255,.35);color:var(--c);padding:4px 13px;border-radius:20px;font-size:.68rem;letter-spacing:.1em;margin:.2rem;transition:all .3s}
-.final-badge:hover{background:rgba(0,212,255,.2);box-shadow:0 0 14px rgba(0,212,255,.3)}
+.meta-item {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
 
-/* ═══════════ PRELOADER ═══════════ */
-#preloader{position:fixed;inset:0;z-index:99999;background:var(--dk);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s cubic-bezier(.4,0,.2,1), visibility .9s;}
-#preloader.hidden{opacity:0;visibility:hidden;pointer-events:none;}
-#pl-canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.4;}
-.pl-shield-wrap{position:relative;width:130px;height:150px;display:flex;align-items:center;justify-content:center;animation:plFloat 3.5s ease-in-out infinite;margin-bottom:1.8rem;}
-@keyframes plFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.pl-ring{position:absolute;border-radius:50%;border:1px solid transparent;top:50%;left:50%;transform:translate(-50%,-50%);}
-.pl-ring-1{width:164px;height:164px;border-top-color:rgba(0,212,255,.8);border-right-color:rgba(0,212,255,.25);animation:spinR 2.8s linear infinite;}
-.pl-ring-2{width:206px;height:206px;border-bottom-color:rgba(0,102,255,.65);border-left-color:rgba(0,102,255,.2);animation:spinL 4.2s linear infinite;}
-.pl-ring-3{width:250px;height:250px;border-top-color:rgba(0,212,255,.22);border-right-color:rgba(0,212,255,.08);border-bottom-color:rgba(0,212,255,.18);animation:spinR 9s linear infinite;}
-@keyframes spinR{to{transform:translate(-50%,-50%) rotate(360deg)}}
-@keyframes spinL{to{transform:translate(-50%,-50%) rotate(-360deg)}}
-.pl-orb{position:absolute;width:8px;height:8px;border-radius:50%;background:#00d4ff;box-shadow:0 0 14px #00d4ff,0 0 28px rgba(0,212,255,.4);top:50%;left:50%;animation:orbRing 2.8s linear infinite;transform-origin:0 0;}
-@keyframes orbRing{from{transform:rotate(0deg) translateX(82px) rotate(0deg)}to{transform:rotate(360deg) translateX(82px) rotate(-360deg)}}
-.pl-scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.85),transparent);box-shadow:0 0 16px rgba(0,212,255,.5);animation:plScan 2.2s ease-in-out infinite;top:0;}
-@keyframes plScan{0%{top:0;opacity:0}8%{opacity:1}92%{opacity:.8}100%{top:100%;opacity:0}}
-.pl-sysname{font-family:'Orbitron',monospace;font-size:clamp(.72rem,2vw,.96rem);font-weight:700;color:#fff;letter-spacing:.22em;text-align:center;margin-bottom:.3rem;}
-.pl-sub{font-size:.63rem;color:rgba(0,212,255,.55);letter-spacing:.18em;text-align:center;margin-bottom:1.5rem;}
-.pl-terminal{font-family:'Courier New',monospace;font-size:.67rem;color:rgba(0,212,255,.65);letter-spacing:.04em;text-align:left;width:min(340px,82vw);margin-bottom:1.3rem;min-height:6rem;line-height:1.75;}
-.pl-terminal .tl{display:block;opacity:0;animation:tlIn .3s ease forwards;}
-.pl-terminal .tl.ok::before{content:'[ OK ] ';color:rgba(40,220,120,.8);}
-.pl-terminal .tl.ld::before{content:'[  >> ] ';color:rgba(0,212,255,.55);}
-.pl-terminal .tl.warn::before{content:'[ !! ] ';color:rgba(255,200,60,.7);}
-@keyframes tlIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
-.pl-bar-wrap{width:min(340px,82vw);height:5px;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.18);border-radius:4px;overflow:hidden;margin-bottom:.5rem;}
-.pl-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#003dcc,#00d4ff,#00ffcc);border-radius:4px;box-shadow:0 0 10px rgba(0,212,255,.5);transition:width .14s linear;position:relative;}
-.pl-bar-fill::after{content:'';position:absolute;right:0;top:0;bottom:0;width:22px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55));animation:bShine .7s ease-in-out infinite;}
-@keyframes bShine{0%,100%{opacity:.3}50%{opacity:1}}
-.pl-pct{font-family:'Orbitron',monospace;font-size:.68rem;color:rgba(0,212,255,.65);letter-spacing:.12em;text-align:right;width:min(340px,82vw);margin-bottom:1.9rem;}
-.pl-btn{position:relative;font-family:'Orbitron',monospace;font-size:.88rem;font-weight:700;letter-spacing:.28em;color:#000;background:linear-gradient(135deg,#00d4ff 0%,#0055ff 100%);border:none;padding:14px 54px;border-radius:8px;cursor:pointer;opacity:0;pointer-events:none;transition:transform .22s,box-shadow .22s,opacity .55s ease;box-shadow:0 0 28px rgba(0,212,255,.4);overflow:hidden;}
-.pl-btn.ready{opacity:1;pointer-events:all;animation:btnPulse 2.2s ease-in-out infinite;}
-@keyframes btnPulse{0%,100%{box-shadow:0 0 26px rgba(0,212,255,.45),0 0 0 0 rgba(0,212,255,.22)}50%{box-shadow:0 0 44px rgba(0,212,255,.75),0 0 0 16px rgba(0,212,255,0)}}
-.pl-btn:hover{transform:scale(1.07);box-shadow:0 0 58px rgba(0,212,255,.85);}
-.pl-btn:active{transform:scale(.96)}
-.pl-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.32),transparent);transform:translateX(-100%);transition:transform .48s;}
-.pl-btn:hover::before{transform:translateX(100%);}
-.pl-corner{position:absolute;width:22px;height:22px;border-color:rgba(0,212,255,.38);border-style:solid;animation:cPulse 3s ease-in-out infinite;}
-.pl-corner.tl{top:18px;left:18px;border-width:2px 0 0 2px;}
-.pl-corner.tr{top:18px;right:18px;border-width:2px 2px 0 0;animation-delay:.6s}
-.pl-corner.br{bottom:18px;right:18px;border-width:0 2px 2px 0;animation-delay:1.2s}
-.pl-corner.bl{bottom:18px;left:18px;border-width:0 0 2px 2px;animation-delay:1.8s}
-@keyframes cPulse{0%,100%{opacity:.35}50%{opacity:1;border-color:rgba(0,212,255,.9)}}
+.meta-item span { color: var(--accent2); font-weight: 700; }
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.hero-stat {
+  background: var(--surface);
+  padding: 1.4rem 1rem;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.hero-stat:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(124,106,247,0.25);
+  background: var(--surface2);
+}
+
+.hero-stat-num {
+  font-family: var(--mono);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent2);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.hero-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  line-height: 1.3;
+}
+
+/* ── SECTION BASE ── */
+section {
+  padding: 6rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.8rem;
+}
+
+.section-title {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.8rem;
+  letter-spacing: -0.5px;
+}
+
+.section-desc {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  line-height: 1.8;
+  max-width: 600px;
+  margin-bottom: 3rem;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── ARGUMENT CARDS ── */
+.arguments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.arg-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.8rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s, transform 0.25s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.arg-card:hover {
+  border-color: rgba(124,106,247,0.7);
+  transform: translateY(-6px) scale(1.01);
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.arg-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+
+.arg-icon {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.arg-title {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.3px;
+}
+
+.arg-text {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+
+/* ── TIMELINE ── */
+.timeline {
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+}
+
+.tl-item {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -2.1rem;
+  top: 4px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent2);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.tl-date {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.tl-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.3rem;
+}
+
+.tl-desc {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* ── SCREENSHOT GALLERY ── */
+.gallery-label {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.gallery-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.2rem;
+}
+
+.gallery-grid.cols-2 {
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+}
+
+.gallery-grid.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.screenshot-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+}
+
+.screenshot-card:hover {
+  border-color: rgba(124,106,247,0.7);
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 12px 48px rgba(124,106,247,0.2), 0 0 0 1px rgba(124,106,247,0.3);
+}
+
+.screenshot-card:hover .sc-overlay {
+  opacity: 1;
+}
+
+.sc-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/10;
+  background: var(--surface2);
+  overflow: hidden;
+}
+
+.sc-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  transition: transform 0.3s;
+}
+
+.screenshot-card:hover .sc-img-wrap img {
+  transform: scale(1.02);
+}
+
+.sc-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(124,106,247,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.sc-overlay-icon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(124,106,247,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.sc-body {
+  padding: 0.9rem 1rem;
+}
+
+.sc-num {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--accent);
+  letter-spacing: 1.5px;
+  margin-bottom: 0.3rem;
+}
+
+.sc-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.sc-desc {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.sc-badge {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 1px;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.badge-green { background: rgba(74,222,128,0.12); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
+.badge-amber { background: rgba(251,191,36,0.12); color: var(--amber); border: 1px solid rgba(251,191,36,0.3); }
+.badge-purple { background: rgba(124,106,247,0.12); color: var(--accent2); border: 1px solid rgba(124,106,247,0.3); }
+.badge-red { background: rgba(248,113,113,0.12); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
+
+/* No image placeholder */
+.sc-placeholder {
+  width: 100%;
+  aspect-ratio: 16/10;
+  background: var(--surface2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sc-placeholder-icon { font-size: 1.5rem; opacity: 0.4; }
+
+/* ── LIGHTBOX ── */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+  backdrop-filter: blur(8px);
+}
+
+.lightbox.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.lightbox-inner {
+  position: relative;
+  max-width: 1100px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lightbox-img {
+  width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.lightbox-caption {
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.lightbox-caption strong { color: #fff; }
+
+.lightbox-close {
+  position: absolute;
+  top: -1rem;
+  right: -1rem;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.lightbox-close:hover { color: #fff; border-color: var(--accent); }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.2rem;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+
+.code-dots { display: flex; gap: 6px; }
+.code-dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-red { background: #ff5f57; }
+.dot-amber { background: #ffbd2e; }
+.dot-green { background: #28c840; }
+
+.code-filename {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+
+.code-body {
+  padding: 1.2rem 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.8;
+  color: #a5b4fc;
+  overflow-x: auto;
+}
+
+.code-body .cm { color: var(--text-dim); font-style: italic; }
+.code-body .kw { color: #c084fc; }
+.code-body .str { color: var(--green); }
+.code-body .num { color: var(--amber); }
+.code-body .fn { color: #60a5fa; }
+.code-body .hl { background: rgba(124,106,247,0.12); display: block; border-left: 2px solid var(--accent); padding-left: 0.5rem; margin-left: -0.5rem; }
+
+/* ── DB TABLE ── */
+.db-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  margin-bottom: 1.5rem;
+}
+
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+}
+
+.db-table th {
+  background: var(--surface2);
+  padding: 0.7rem 1rem;
+  text-align: left;
+  color: var(--accent2);
+  font-weight: 700;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+}
+
+.db-table td {
+  padding: 0.6rem 1rem;
+  color: var(--text-dim);
+  border-bottom: 1px solid rgba(124,106,247,0.08);
+}
+
+.db-table tr:last-child td { border-bottom: none; }
+.db-table tr:hover td { background: rgba(124,106,247,0.04); }
+
+.db-table td.val-str { color: var(--green); }
+.db-table td.val-num { color: var(--amber); }
+.db-table td.val-bool { color: var(--accent2); }
+.db-table td.val-date { color: var(--text-dim); font-size: 0.68rem; }
+
+/* ── COMMIT LIST ── */
+.commit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.commit-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.8rem 1rem;
+  transition: border-color 0.2s;
+}
+
+.commit-item:hover {
+  border-color: rgba(124,106,247,0.5);
+  background: var(--surface2);
+  transform: translateX(6px);
+  box-shadow: -4px 0 0 var(--accent);
+  transition: all 0.2s;
+}
+
+.commit-hash {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  width: 64px;
+  flex-shrink: 0;
+  background: rgba(124,106,247,0.1);
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+}
+
+.commit-msg {
+  font-size: 0.85rem;
+  color: var(--text);
+  flex: 1;
+}
+
+.commit-date {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.commit-lines {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+}
+
+.plus { color: var(--green); }
+.minus { color: var(--red); }
+
+/* ── COUNTER BANNER ── */
+.counter-banner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 3rem;
+}
+
+.counter-item {
+  background: var(--surface);
+  padding: 1.5rem 1rem;
+  text-align: center;
+}
+
+.counter-num {
+  font-family: var(--mono);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent2);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.counter-label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  line-height: 1.3;
+}
+
+/* ── VERDICT ── */
+.verdict-box {
+  background: linear-gradient(135deg, rgba(74,222,128,0.08), rgba(124,106,247,0.08));
+  border: 1px solid rgba(74,222,128,0.3);
+  border-radius: 8px;
+  padding: 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.verdict-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green), var(--accent2), var(--green));
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes float-up {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes glow-pulse {
+  0%,100% { box-shadow: 0 0 20px rgba(124,106,247,0.3), 0 0 40px rgba(124,106,247,0.1); }
+  50% { box-shadow: 0 0 40px rgba(124,106,247,0.6), 0 0 80px rgba(124,106,247,0.3), 0 0 120px rgba(167,139,250,0.15); }
+}
+
+@keyframes border-run {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scanline {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes hero-glow-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes particle-float {
+  0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.7; }
+  33% { transform: translateY(-30px) translateX(15px) scale(1.2); opacity: 1; }
+  66% { transform: translateY(-15px) translateX(-10px) scale(0.9); opacity: 0.5; }
+  100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.7; }
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(30px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.verdict-icon { font-size: 3.5rem; display: block; margin-bottom: 1rem; }
+
+.verdict-title {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.verdict-text {
+  font-size: 1rem;
+  color: var(--text-dim);
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.8;
+}
+
+/* ── PROOF CHECKLIST ── */
+.proof-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 560px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.proof-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: rgba(74,222,128,0.05);
+  border: 1px solid rgba(74,222,128,0.15);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.proof-check {
+  flex-shrink: 0;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #000;
+  font-weight: 700;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(124,106,247,0.4); border-radius: 3px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  header { padding: 0 1rem; }
+  .header-nav { display: none; }
+  section { padding: 4rem 1rem; }
+  .hero-stats { grid-template-columns: repeat(2,1fr); }
+  .gallery-grid.cols-3 { grid-template-columns: 1fr; }
+  .gallery-grid.cols-2 { grid-template-columns: 1fr; }
+  .counter-banner { grid-template-columns: repeat(2,1fr); }
+}
+
+/* ── REVEAL ANIMATION ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+/* ── WATERMARK BACKGROUND ── */
+.watermark-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.watermark-field {
+  position: absolute;
+  top: -60%;
+  left: -60%;
+  width: 220%;
+  height: 220%;
+  transform: rotate(40deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.watermark-row {
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: rgba(124,106,247,0.09);
+  position: relative;
+  will-change: transform;
+  animation: watermark-scroll 60s linear infinite;
+  transform: translateZ(0);
+}
+
+.watermark-row::before {
+  content: "УТЕЕВ ДАНИЭЛЬ · PO-231 · 12.06.2026 · УТЕЕВ ДАНИЭЛЬ · PO-231 · 12.06.2026 · УТЕЕВ ДАНИЭЛЬ · PO-231 · 12.06.2026 · УТЕЕВ ДАНИЭЛЬ · PO-231 · 12.06.2026 · УТЕЕВ ДАНИЭЛЬ · PO-231 · 12.06.2026 · УТЕЕВ ДАНИЭЛЬ · PO-231 · 12.06.2026 · УТЕЕВ ДАНИЭЛЬ · PO-231 · 12.06.2026 · УТЕЕВ ДАНИЭЛЬ · PO-231 · 12.06.2026 · ";
+}
+
+.watermark-row {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(167,139,250,0.35) 15%,
+    rgba(124,106,247,0.45) 35%,
+    rgba(74,222,128,0.28) 50%,
+    rgba(124,106,247,0.45) 65%,
+    rgba(167,139,250,0.35) 85%,
+    transparent 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 300% 100%;
+  animation: watermark-scroll 60s linear infinite, watermark-color 8s ease-in-out infinite;
+  filter: blur(0px);
+  text-shadow: none;
+}
+
+.watermark-row:nth-child(2n) { animation-duration: 75s, 11s; letter-spacing: 7px; }
+.watermark-row:nth-child(3n) { animation-duration: 50s, 6s; font-size: 0.85rem; letter-spacing: 4px; }
+.watermark-row:nth-child(4n) { animation-duration: 90s, 14s; letter-spacing: 9px; }
+.watermark-row:nth-child(5n) { animation-duration: 65s, 9s; font-size: 1.1rem; }
+.watermark-row:nth-child(6n) { animation-duration: 80s, 7s; letter-spacing: 3px; opacity: 0.7; }
+
+@keyframes watermark-color {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes watermark-scroll {
+  from { transform: translateX(-25%) translateZ(0); }
+  to { transform: translateX(25%) translateZ(0); }
+}
+
+header, .hero, section { position: relative; z-index: 1; }
+/* PARTICLES */
+.particle {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent2);
+  pointer-events: none;
+  z-index: 0;
+  animation: particle-float linear infinite;
+}
+
+/* CURSOR GLOW */
+.cursor-glow {
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124,106,247,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  transition: left 0.15s ease, top 0.15s ease;
+}
+
+/* SCANLINE on hero */
+.hero-scanline {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(124,106,247,0.4), transparent);
+  pointer-events: none;
+  animation: scanline 4s linear infinite;
+  z-index: 2;
+}
+
+/* COUNTER NUMBER animation */
+.counter-num.animated {
+  animation: count-up 0.6s ease forwards;
+}
+
+/* ARG CARD stagger */
+.arg-card:nth-child(1) { animation-delay: 0.05s; }
+.arg-card:nth-child(2) { animation-delay: 0.1s; }
+.arg-card:nth-child(3) { animation-delay: 0.15s; }
+.arg-card:nth-child(4) { animation-delay: 0.2s; }
+.arg-card:nth-child(5) { animation-delay: 0.25s; }
+.arg-card:nth-child(6) { animation-delay: 0.3s; }
+
+.arguments-grid.visible .arg-card {
+  animation: card-in 0.5s ease forwards;
+  opacity: 0;
+}
+
+/* TIMELINE dot pulse */
+.tl-item::before {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* SECTION TITLE gradient */
+.section-title {
+  background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* VERDICT title shimmer */
+.verdict-title {
+  background: linear-gradient(90deg, var(--green), #a78bfa, var(--green));
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: border-run 3s linear infinite;
+}
+
+/* PROOF ITEM hover */
+.proof-item {
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+}
+.proof-item:hover {
+  transform: translateX(6px);
+  border-color: rgba(74,222,128,0.5);
+  background: rgba(74,222,128,0.08);
+}
+
+/* COMMIT ITEM transition */
+.commit-item {
+  transition: all 0.2s ease;
+}
+
+/* DB TABLE row transition */
+.db-table tr {
+  transition: background 0.2s;
+}
+
+/* HEADER border glow */
+header {
+  border-bottom: 1px solid transparent;
+  background-image: linear-gradient(rgba(9,9,15,0.88), rgba(9,9,15,0.88)),
+    linear-gradient(90deg, var(--accent), var(--accent2), var(--green), var(--accent));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  background-size: auto, 300% 100%;
+  animation: border-run 4s linear infinite;
+}
+.budget-card {
+  background: rgba(255,60,60,0.05);
+  border: 1px solid rgba(255,60,60,0.18);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  text-align: center;
+  min-width: 106px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 1.7rem;
+  transition: all 0.3s;
+}
+.budget-card:hover {
+  background: rgba(255,60,60,0.12);
+  transform: scale(1.06) translateY(-3px);
+  box-shadow: 0 0 22px rgba(255,60,60,0.2);
+}
+.budget-card span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #ff6666;
+  text-shadow: 0 0 12px rgba(255,100,100,0.4);
+}
+.budget-card small {
+  font-size: 0.58rem;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.05em;
+}
+
+#secret-overlay .secret-title-red {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(0.8rem, 1.8vw, 0.98rem);
+  font-weight: 700;
+  color: #ff3c3c;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  text-align: center;
+  text-shadow: 0 0 30px rgba(255,60,60,0.8);
+}
 </style>
 </head>
 <body>
-<canvas id="bg"></canvas>
-<canvas id="cursor-fx"></canvas>
-<div id="progress-bar"></div>
 
-<!-- ═══════ PRELOADER ═══════ -->
-<div id="preloader">
-  <canvas id="pl-canvas"></canvas>
-  <div class="pl-scan"></div>
-  <div class="pl-corner tl"></div>
-  <div class="pl-corner tr"></div>
-  <div class="pl-corner br"></div>
-  <div class="pl-corner bl"></div>
-  <div class="pl-shield-wrap">
-    <div class="pl-ring pl-ring-1"></div>
-    <div class="pl-ring pl-ring-2"></div>
-    <div class="pl-ring pl-ring-3"></div>
-    <div class="pl-orb"></div>
-    <svg width="106" height="124" viewBox="0 0 90 105" fill="none">
-      <defs>
-        <linearGradient id="plsg" x1="0" y1="0" x2="90" y2="105" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#00d4ff" stop-opacity=".38"/>
-          <stop offset="100%" stop-color="#0066ff" stop-opacity=".18"/>
-        </linearGradient>
-        <filter id="plglow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="3.5" result="b"/>
-          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
-      <path d="M45 2L85 18V52C85 72 65 92 45 103C25 92 5 72 5 52V18L45 2Z"
-            fill="url(#plsg)" stroke="#00d4ff" stroke-width="2.5" filter="url(#plglow)"/>
-      <path d="M45 12L78 26V52C78 68 62 86 45 96C28 86 12 68 12 52V26L45 12Z"
-            fill="none" stroke="rgba(0,212,255,0.38)" stroke-width="1"/>
-      <text x="45" y="62" text-anchor="middle" font-family="Orbitron,monospace"
-            font-size="27" font-weight="900" fill="#00d4ff">ИБ</text>
-      <circle cx="45" cy="52" r="26" fill="none" stroke="rgba(0,212,255,0.14)"
-              stroke-width="1" stroke-dasharray="3 4">
-        <animateTransform attributeName="transform" type="rotate"
-          from="0 45 52" to="360 45 52" dur="10s" repeatCount="indefinite"/>
-      </circle>
-    </svg>
+  <div class="watermark-bg">
+  <div class="watermark-field">
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
+    <div class="watermark-row"></div>
   </div>
-  <p class="pl-sysname">ИБ-АКАДЕМИЯ · SECURE BOOT</p>
-  <p class="pl-sub">ИНИЦИАЛИЗАЦИЯ ЗАЩИЩЁННОЙ СРЕДЫ</p>
-  <div class="pl-terminal" id="pl-term"></div>
-  <div class="pl-bar-wrap"><div class="pl-bar-fill" id="pl-bar"></div></div>
-  <div class="pl-pct" id="pl-pct">0%</div>
-  <button class="pl-btn" id="pl-btn" onclick="startPresentation()">НАЧАТЬ ›</button>
 </div>
 
-<div id="ss-overlay">
-  <div id="ss-dim"></div>
-  <div id="ss-text">СОВЕРШЕННО<br>СЕКРЕТНО</div>
+<!-- HEADER -->
+<header>
+  <div class="header-logo">// Утеев Даниэль · PO-231 · 2026</div>
+  <nav>
+    <ul class="header-nav">
+      <li><a href="#proof">Доказательства</a></li>
+      <li><a href="#github">GitHub</a></li>
+      <li><a href="#database">База данных</a></li>
+      <li><a href="#code">Код</a></li>
+      <li><a href="#email-myth">.ru email</a></li>
+      <li><a href="#verdict">Итог</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-scanline"></div>
+  <div class="grid-bg"></div>
+  <div id="particles-container"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">Переслушивание · Дипломная защита 12.06.2026</div>
+    <h1 class="hero-title">
+      Это <span class="accent">мой</span> сайт.<br>Я создал его сам.
+    </h1>
+    <p class="hero-subtitle">
+      Утеев Даниэль Фаридович, группа PO-231.<br>
+      Ниже — хронологические доказательства: история коммитов в GitHub,
+      структура базы данных, архитектура кода и реальные данные пользователей.
+      Всё это создавалось с нуля с 7 мая по 11 июня 2026 года.
+    </p>
+    
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">128</div>
+        <div class="hero-stat-label">коммитов в двух репозиториях</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">10</div>
+        <div class="hero-stat-label">таблиц в базе данных</div>
+      </div>
+      
+      <div class="hero-stat">
+        <div class="hero-stat-num">36</div>
+        <div class="hero-stat-label">дней разработки</div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="slides">
+<div class="divider"></div>
 
-  <!-- SLIDE 0 — HERO -->
-  <div class="slide active" id="s0">
-    <div class="shield-wrap" style="position:relative;margin-bottom:.3rem">
-      <div class="shield-glow"></div>
-      <svg width="96" height="112" viewBox="0 0 90 105" fill="none">
-        <defs>
-          <linearGradient id="sg0" x1="0" y1="0" x2="90" y2="105" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#00d4ff" stop-opacity=".25"/>
-            <stop offset="100%" stop-color="#0066ff" stop-opacity=".12"/>
-          </linearGradient>
-        </defs>
-        <path d="M45 2L85 18V52C85 72 65 92 45 103C25 92 5 72 5 52V18L45 2Z" fill="url(#sg0)" stroke="#00d4ff" stroke-width="2"/>
-        <path d="M45 12L78 26V52C78 68 62 86 45 96C28 86 12 68 12 52V26L45 12Z" fill="none" stroke="rgba(0,212,255,0.35)" stroke-width="1"/>
-        <text x="45" y="62" text-anchor="middle" font-family="Orbitron,monospace" font-size="27" font-weight="900" fill="#00d4ff">ИБ</text>
-        <circle cx="45" cy="52" r="30" fill="none" stroke="rgba(0,212,255,0.12)" stroke-width="1" stroke-dasharray="4 3">
-          <animateTransform attributeName="transform" type="rotate" from="0 45 52" to="360 45 52" dur="20s" repeatCount="indefinite"/>
-        </circle>
-        <circle cx="45" cy="52" r="38" fill="none" stroke="rgba(0,212,255,0.07)" stroke-width="1" stroke-dasharray="2 5">
-          <animateTransform attributeName="transform" type="rotate" from="360 45 52" to="0 45 52" dur="30s" repeatCount="indefinite"/>
-        </circle>
-      </svg>
-    </div>
-    <p class="hero-sub" style="margin-top:.5rem"><span class="typewriter" id="tw-sub"></span></p>
-    <h1 class="hero-title" data-text="Организация процесса информирования и обучения сотрудников по вопросам информационной безопасности">Организация процесса информирования и обучения сотрудников по вопросам информационной безопасности</h1>
-    <div style="margin:.5rem 0">
-      <span class="badge" style="animation-delay:.1s">ИБ-Академия</span>
-      <span class="badge" style="animation-delay:.2s">Казахстан · 2026</span>
-    </div>
-    <a class="link-pill" href="https://den-dan.github.io/Employee_education/" target="_blank">🔗 den-dan.github.io/Employee_education</a>
-  </div>
+<!-- АРГУМЕНТЫ -->
+<section id="proof">
+  <div class="section-eyebrow">// почему плагиат невозможен</div>
+  <h2 class="section-title">2 неопровержимых доказательства</h2>
+  <p class="section-desc">Каждый из этих аргументов самодостаточен. Вместе они образуют полную доказательную базу авторства.</p>
 
-  <!-- SLIDE 1 — TEAM -->
-  <div class="slide" id="s1">
-    <p class="slide-title">Разработчики</p>
-    <div class="team-grid">
-      <div class="team-card">
-        <div class="tilt-glare"></div>
-        <div class="avatar">
-          <canvas class="avatar-canvas" id="av0" width="84" height="84"></canvas>
-          <svg width="46" height="46" viewBox="0 0 46 46" fill="none" style="position:relative;z-index:1;pointer-events:none">
-            <g transform="translate(0,5)">
-            <rect x="3" y="3" width="40" height="28" rx="4" fill="#030a1a"/>
-            <rect x="3" y="3" width="40" height="28" rx="4" stroke="#00d4ff" stroke-width="1.8" fill="rgba(3,10,26,0.95)"/>
-            <rect x="3" y="3" width="40" height="8"  rx="4" fill="rgba(0,212,255,0.1)" stroke="none"/>
-            <rect x="3" y="7" width="40" height="4"  fill="rgba(0,212,255,0.1)" stroke="none"/>
-            <circle cx="9"  cy="7" r="1.5" fill="#ff5f57"/>
-            <circle cx="15" cy="7" r="1.5" fill="#febc2e"/>
-            <circle cx="21" cy="7" r="1.5" fill="#28c840"/>
-            <polyline points="9,17 13,21 9,25"  stroke="#00d4ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            <polyline points="23,17 19,21 23,25" stroke="#00d4ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            <line x1="15" y1="26" x2="17" y2="16" stroke="rgba(0,212,255,.55)" stroke-width="1.4" stroke-linecap="round"/>
-            <line x1="26" y1="18" x2="38" y2="18" stroke="rgba(0,212,255,.35)" stroke-width="1.3" stroke-linecap="round"/>
-            <line x1="26" y1="22" x2="35" y2="22" stroke="rgba(0,212,255,.25)" stroke-width="1.3" stroke-linecap="round"/>
-            <line x1="26" y1="26" x2="37" y2="26" stroke="rgba(0,212,255,.3)"  stroke-width="1.3" stroke-linecap="round"/>
-            <rect x="27" y="26" width="2" height="2.5" rx=".5" fill="#00d4ff">
-              <animate attributeName="opacity" values="1;0;1" dur=".9s" repeatCount="indefinite"/>
-            </rect>
-            <rect x="19" y="31" width="8"   height="3"   rx="1"   fill="rgba(0,212,255,0.3)"/>
-            <rect x="15" y="34" width="16"  height="2.5" rx="1.2" fill="rgba(0,212,255,0.2)"/>
-            </g>
-          </svg>
-        </div>
-        <div class="team-name">Утеев Даниэль</div>
-        <div class="team-code">UD-01</div>
-        <div class="team-role">Трудяга</div>
-      </div>
-      <div class="team-card">
-        <div class="tilt-glare"></div>
-        <div class="avatar">
-          <canvas class="avatar-canvas" id="av1" width="84" height="84"></canvas>
-          <svg width="46" height="46" viewBox="0 0 46 46" fill="none" style="position:relative;z-index:1;pointer-events:none">
-            <path d="M23 3L41 10V22C41 33 32 40 23 44C14 40 5 33 5 22V10L23 3Z"
-                  fill="rgba(0,212,255,0.07)" stroke="#00d4ff" stroke-width="1.8" stroke-linejoin="round"/>
-            <path d="M23 8L37 14V22C37 31 29 37 23 41C17 37 9 31 9 22V14L23 8Z"
-                  fill="none" stroke="rgba(0,212,255,0.28)" stroke-width="1" stroke-linejoin="round"/>
-            <path d="M27 13L19 24H24.5L21 34L30 22H24.5L27 13Z"
-                  fill="#00d4ff" fill-opacity=".85" stroke="#00d4ff" stroke-width=".4" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="team-name">Афанасьев Артём</div>
-        <div class="team-code">AA-02</div>
-        <div class="team-role">Душа команды</div>
-      </div>
+  <div class="arguments-grid reveal">
+    <div class="arg-card">
+      <span class="arg-icon">📅</span>
+      <div class="arg-title">Хронология коммитов</div>
+      <div class="arg-text">128 коммитов с реальными датами с 7 мая по 11 июня 2026. Видна постепенная эволюция: от пустой HTML-страницы до полноценной платформы с аутентификацией и базой данных.</div>
     </div>
-    <p style="color:rgba(255,255,255,.22);font-size:.68rem;margin-top:2.4rem;letter-spacing:.14em;text-align:center">ДИПЛОМНАЯ РАБОТА · 2026 · ИБ-АКАДЕМИЯ</p>
-  </div>
-
-  <!-- SLIDE 2 — STACK -->
-  <div class="slide" id="s2">
-    <p class="slide-title">Стек технологий</p>
-    <div class="tools-wrap">
-      <div class="tools-row">
-        <div class="tool-item"><div class="tilt-glare"></div><span class="tool-icon">🌐</span><div><div class="tool-name">HTML</div><div class="tool-desc">Структура</div></div></div>
-        <div class="tool-item"><div class="tilt-glare"></div><span class="tool-icon">🎨</span><div><div class="tool-name">CSS</div><div class="tool-desc">Стилизация</div></div></div>
-        <div class="tool-item"><div class="tilt-glare"></div><span class="tool-icon">⚡</span><div><div class="tool-name">JavaScript</div><div class="tool-desc">Логика</div></div></div>
-        <div class="tool-item"><div class="tilt-glare"></div><span class="tool-icon">🗄️</span><div><div class="tool-name">Supabase</div><div class="tool-desc">База данных</div></div></div>
-      </div>
-      <div class="tools-row">
-        <div class="tool-item"><div class="tilt-glare"></div><span class="tool-icon">📦</span><div><div class="tool-name">GitHub Pages</div><div class="tool-desc">Хостинг</div></div></div>
-        <div class="tool-item"><div class="tilt-glare"></div><span class="tool-icon">🎬</span><div><div class="tool-name">YouTube API</div><div class="tool-desc">Видеомодули</div></div></div>
-        <div class="tool-item"><div class="tilt-glare"></div><span class="tool-icon">📱</span><div><div class="tool-name">PWA Ready</div><div class="tool-desc">Адаптивность</div></div></div>
-      </div>
+    <div class="arg-card">
+      <span class="arg-icon">🗄️</span>
+      <div class="arg-title">Своя база данных в Supabase</div>
+      <div class="arg-text">Проект ib-academy в Supabase привязан к email ko-23-190@turan-edu.kz. 10 таблиц, 498 записей в content_history. Чужой код не создаёт чужую БД.</div>
     </div>
   </div>
+</section>
 
-  <!-- SLIDE 3 — SECRET -->
-  <div class="slide" id="s3">
-    <p class="secret-title">🔴 Засекреченная информация</p>
-    <div class="budget-wrap">
-      <div class="budget-label-top">Бюджет проекта · Гриф: СЕКРЕТНО</div>
-      <div class="budget-grid">
-        <div class="budget-item"><span class="budget-emoji">☕</span><span class="budget-qty">20</span><div class="budget-lbl">литров кофе</div></div>
-        <div class="budget-item"><span class="budget-emoji">🍫</span><span class="budget-qty">30</span><div class="budget-lbl">энерг. батончиков</div></div>
-        <div class="budget-item"><span class="budget-emoji">🍩</span><span class="budget-qty">2</span><div class="budget-lbl">пончика</div></div>
-        <div class="budget-item"><span class="budget-emoji">⚡</span><span class="budget-qty">3</span><div class="budget-lbl">энергетика</div></div>
-        <div class="budget-item"><span class="budget-emoji">🥩</span><span class="budget-qty">1</span><div class="budget-lbl">стейк (заслужили)</div></div>
-      </div>
+<div class="divider"></div>
+
+<!-- GITHUB -->
+<section id="github">
+  <div class="section-eyebrow">// история разработки в github</div>
+  <h2 class="section-title">От первого коммита до финала</h2>
+  <p class="section-desc">Два репозитория фиксируют каждый шаг разработки. Первый коммит — 7 мая 2026, последний — 11 июня 2026 (5 часов до защиты).</p>
+
+  <!-- Счётчики -->
+  <div class="counter-banner reveal">
+    <div class="counter-item" onclick="toggleCommits('repo1')" style="cursor:pointer;" title="Нажми чтобы раскрыть">
+  <div class="counter-num">77</div>
+  <div class="counter-label">коммитов в Test-Education</div>
+</div>
+    <div class="counter-item" onclick="toggleCommits('repo2')" style="cursor:pointer;" title="Нажми чтобы раскрыть">
+  <div class="counter-num">51</div>
+  <div class="counter-label">коммитов в Employee_education</div>
+</div>
+    <div class="counter-item" id="secret-trigger" onclick="openSecretBudget()" style="cursor:pointer;" title="???">
+  <div class="counter-num">36</div>
+  <div class="counter-label">дней активной разработки</div>
+</div>
+    <div class="counter-item">
+      <div class="counter-num">07 МАЯ</div>
+      <div class="counter-label">первый коммит «Initial commit»</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-num">11 ИЮН</div>
+      <div class="counter-label">последний коммит перед защитой</div>
     </div>
   </div>
-
-  <!-- SLIDE 4 — GOALS (новый) -->
-  <div class="slide" id="s4">
-    <p class="slide-title">Цели проекта</p>
-    <div class="goals-wrap">
-      <div class="goal-row">
-
-        <div class="goal-card">
-          <div class="goal-scan"></div>
-          <div class="goal-icon-wrap">🎓</div>
-          <div class="goal-body">
-            <div class="goal-title">Обучение сотрудников</div>
-            <div class="goal-desc">Формирование практических навыков кибербезопасности у персонала через интерактивные модули и тесты</div>
-          </div>
-        </div>
-
-        <div class="goal-card">
-          <div class="goal-scan"></div>
-          <div class="goal-icon-wrap">📣</div>
-          <div class="goal-body">
-            <div class="goal-title">Продвижение ИБ-культуры</div>
-            <div class="goal-desc">Повышение осведомлённости об угрозах и распространение культуры информационной безопасности в организациях</div>
-          </div>
-        </div>
-
-      </div>
-      <div class="goal-row">
-
-        <div class="goal-card">
-          <div class="goal-scan"></div>
-          <div class="goal-icon-wrap">🛡️</div>
-          <div class="goal-body">
-            <div class="goal-title">Снижение рисков</div>
-            <div class="goal-desc">Минимизация человеческого фактора как основной точки уязвимости в системах защиты данных</div>
-          </div>
-        </div>
-
-        <div class="goal-card">
-          <div class="goal-scan"></div>
-          <div class="goal-icon-wrap">📊</div>
-          <div class="goal-body">
-            <div class="goal-title">Контроль прогресса</div>
-            <div class="goal-desc">Отслеживание результатов обучения и сертификация сотрудников через систему ролей и тестирования</div>
-          </div>
-        </div>
-
-      </div>
-      <div class="goal-row">
-        <div class="goal-card goal-card-wide">
-          <div class="goal-scan"></div>
-          <div class="goal-icon-wrap">🌍</div>
-          <div class="goal-body">
-            <div class="goal-title">Доступность для Казахстана</div>
-            <div class="goal-desc">Открытая веб-платформа без установки — любой сотрудник получает доступ к актуальным материалам по ИБ с любого устройства, в любое время</div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div id="commits-repo1" style="display:none; margin-top:1.5rem;">
+  <div class="gallery-label">Все 77 коммитов · Test-Education · Den-dan</div>
+  <div class="commit-list">
+    <div class="commit-item"><div class="commit-hash">c2bdce2</div><div class="commit-msg">Initial commit</div><div class="commit-date">07 мая 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">00e72f4</div><div class="commit-msg">Create index.html</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">1726e7c</div><div class="commit-msg">Origins</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">11a9794</div><div class="commit-msg">2</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">4e3bfd7</div><div class="commit-msg">2</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">1e62f3c</div><div class="commit-msg">2</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">6fe028b</div><div class="commit-msg">Update index.html</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">5475684</div><div class="commit-msg">3</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">452c862</div><div class="commit-msg">3</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">8b297b7</div><div class="commit-msg">4</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">7265244</div><div class="commit-msg">4</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">c93b3ee</div><div class="commit-msg">4</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">d9e0b7e</div><div class="commit-msg">5</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">a5d8d14</div><div class="commit-msg">Update script.js6</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">444be0a</div><div class="commit-msg">Random_test</div><div class="commit-date">05 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">0aae866</div><div class="commit-msg">Откат index.html</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">bdfb69d</div><div class="commit-msg">Откат script.js</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">d7ec771</div><div class="commit-msg">Откат styles.css</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">c81132b</div><div class="commit-msg">Local index.html</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">ca0e36b</div><div class="commit-msg">Local index.html</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">7e443d9</div><div class="commit-msg">Local styles.css</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">6c68935</div><div class="commit-msg">Local_Admin</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">8fa975e</div><div class="commit-msg">Salut.fix_2</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">df94e32</div><div class="commit-msg">Salut.fix</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">77542dc</div><div class="commit-msg">Besty.css</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">404249a</div><div class="commit-msg">Besty script.js</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">b55edab</div><div class="commit-msg">Besty.html</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">a2f3819</div><div class="commit-msg">Beauty styles.css</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">b48d5d0</div><div class="commit-msg">Beauty script.js</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">0ae65fd</div><div class="commit-msg">Beauty index.html</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">ccabc64</div><div class="commit-msg">Finale?! index.html</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">e8a3e16</div><div class="commit-msg">Finale?! styles.css</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">ac2a374</div><div class="commit-msg">Finale?! script.js</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">a704b6d</div><div class="commit-msg">Animations</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">5b7b423</div><div class="commit-msg">Animations.css</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">d48ad31</div><div class="commit-msg">Animations index.html</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">72d2208</div><div class="commit-msg">Pass_yey index.html</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">9770719</div><div class="commit-msg">Password_yey script.js</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">b78f5e0</div><div class="commit-msg">Password_yey styles.css</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">d63ee9e</div><div class="commit-msg">Finale??? index.html</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">589bc96</div><div class="commit-msg">Finale??? script.js</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">87e2afc</div><div class="commit-msg">Finale??? styles.css</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">5717d6b</div><div class="commit-msg">Finale?! index.html</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">558b342</div><div class="commit-msg">Git</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">231aa1f</div><div class="commit-msg">Git</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">74e0956</div><div class="commit-msg">GitHub</div><div class="commit-date">06 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">c75b4d5</div><div class="commit-msg">The end? index.html</div><div class="commit-date">07 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">bd34a5a</div><div class="commit-msg">The end? script.js</div><div class="commit-date">07 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">3cf20fb</div><div class="commit-msg">The end? styles.css</div><div class="commit-date">07 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">571fd8a</div><div class="commit-msg">The end?</div><div class="commit-date">07 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">4f3bd5f</div><div class="commit-msg">The end?</div><div class="commit-date">07 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">ddd1149</div><div class="commit-msg">Password_change index.html</div><div class="commit-date">07 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">1ceee2a</div><div class="commit-msg">Change_password script.js</div><div class="commit-date">07 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">a6d6fe9</div><div class="commit-msg">Change_password styles.css</div><div class="commit-date">07 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">eee4235</div><div class="commit-msg">Admin_plus script.js</div><div class="commit-date">07 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">432b3b0</div><div class="commit-msg">Admin_Plus index.html</div><div class="commit-date">07 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">8b754ba</div><div class="commit-msg">Admin_plus styles.css</div><div class="commit-date">07 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">2a4ac4d</div><div class="commit-msg">Admin_panel.js</div><div class="commit-date">08 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">0594381</div><div class="commit-msg">The end. index.html</div><div class="commit-date">08 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">61ccfe7</div><div class="commit-msg">The end script.js</div><div class="commit-date">08 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">d357c63</div><div class="commit-msg">The end styles.css</div><div class="commit-date">08 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">0a741a0</div><div class="commit-msg">Joke index.html</div><div class="commit-date">08 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">ccfb28d</div><div class="commit-msg">The end styles.css</div><div class="commit-date">08 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">56fc35b</div><div class="commit-msg">Log_in-animation</div><div class="commit-date">последняя нед.</div></div>
+    <div class="commit-item"><div class="commit-hash">4a36739</div><div class="commit-msg">Log_in-animation</div><div class="commit-date">последняя нед.</div></div>
+    <div class="commit-item"><div class="commit-hash">41e734b</div><div class="commit-msg">Animation_upgrade</div><div class="commit-date">последняя нед.</div></div>
+    <div class="commit-item"><div class="commit-hash">592217b</div><div class="commit-msg">Animation_upgrade_css</div><div class="commit-date">последняя нед.</div></div>
+    <div class="commit-item"><div class="commit-hash">81eceda</div><div class="commit-msg">Super_animation</div><div class="commit-date">последняя нед.</div></div>
+    <div class="commit-item"><div class="commit-hash">89f39f6</div><div class="commit-msg">Super_animation</div><div class="commit-date">последняя нед.</div></div>
+    <div class="commit-item"><div class="commit-hash">b8835c1</div><div class="commit-msg">Finale??</div><div class="commit-date">последняя нед.</div></div>
+    <div class="commit-item"><div class="commit-hash">0d1a417</div><div class="commit-msg">Finale?</div><div class="commit-date">последняя нед.</div></div>
+    <div class="commit-item"><div class="commit-hash">6525868</div><div class="commit-msg">Finale?</div><div class="commit-date">последняя нед.</div></div>
+    <div class="commit-item"><div class="commit-hash">47a9dca</div><div class="commit-msg">Finale??</div><div class="commit-date">последняя нед.</div></div>
+    <div class="commit-item"><div class="commit-hash">612be26</div><div class="commit-msg">Git</div><div class="commit-date">последняя нед.</div></div>
   </div>
-
-  <!-- SLIDE 5 — PLATFORM (бывший s4) -->
-  <div class="slide" id="s5">
-    <p class="slide-title">Платформа онлайн</p>
-    <div class="site-frame">
-      <div class="tilt-glare"></div>
-      <svg width="54" height="62" viewBox="0 0 90 105" fill="none" style="position:relative;z-index:1">
-        <path d="M45 2L85 18V52C85 72 65 92 45 103C25 92 5 72 5 52V18L45 2Z" fill="rgba(0,212,255,0.12)" stroke="#00d4ff" stroke-width="2.5"/>
-        <text x="45" y="62" text-anchor="middle" font-family="Orbitron,monospace" font-size="26" font-weight="900" fill="#00d4ff">ИБ</text>
-      </svg>
-      <p style="font-family:'Orbitron',monospace;font-size:.9rem;font-weight:700;color:#fff;margin:.7rem 0 .25rem;letter-spacing:.05em;position:relative;z-index:1">ИБ-Академия</p>
-      <p style="color:rgba(255,255,255,.35);font-size:.65rem;margin-bottom:.7rem;position:relative;z-index:1">Информационная безопасность для сотрудников Казахстана</p>
-      <div class="site-stats">
-        <div class="stat-item"><span class="stat-num" data-target="6">0</span><div class="stat-lab">Модулей</div></div>
-        <div class="stat-item"><span class="stat-num" data-target="40">0</span><div class="stat-lab">Вопросов</div></div>
-        <div class="stat-item"><span class="stat-num" data-target="5">0</span><div class="stat-lab">Ролей</div></div>
-        <div class="stat-item"><span class="stat-num" style="font-size:1.8rem">∞</span><div class="stat-lab">Безопасности</div></div>
-      </div>
-      <a class="site-url" href="https://den-dan.github.io/Employee_education/" target="_blank">den-dan.github.io/Employee_education</a>
-    </div>
-    <div style="margin-top:1.2rem;text-align:center;position:relative;z-index:1">
-      <span class="final-badge">Утеев Даниэль</span>
-      <span class="final-badge">Афанасьев Артём</span>
-      <p style="font-size:.6rem;color:rgba(255,255,255,.2);margin-top:.75rem;letter-spacing:.18em">ДИПЛОМНАЯ РАБОТА · 2026</p>
-    </div>
+</div>
+<div id="commits-repo2" style="display:none; margin-top:1.5rem;">
+  <div class="gallery-label">Все 51 коммит · Employee_education · Den-dan / ko-23-190-sys</div>
+  <div class="commit-list">
+    <div class="commit-item"><div class="commit-hash">37036ed</div><div class="commit-msg">Initial commit</div><div class="commit-date">07 мая 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">e1613ee</div><div class="commit-msg">Add files via upload</div><div class="commit-date">07 мая 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">c8cb23a</div><div class="commit-msg">temaTEST v1</div><div class="commit-date">17 мая 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">11aac92</div><div class="commit-msg">temaTEST v2</div><div class="commit-date">17 мая 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">a4b4d39</div><div class="commit-msg">temaTEST v3</div><div class="commit-date">17 мая 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">7ebe260</div><div class="commit-msg">Update index.html</div><div class="commit-date">22 мая 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">3f2d2c3</div><div class="commit-msg">New changes for Tema_govnomes is ready!</div><div class="commit-date">22 мая 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">1c2302a</div><div class="commit-msg">denchil opezdol kakie 6k strok</div><div class="commit-date">25 мая 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">9e82538</div><div class="commit-msg">denchik ya ystal</div><div class="commit-date">25 мая 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">57c3a89</div><div class="commit-msg">lyalyalyalya</div><div class="commit-date">01 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">8f47d03</div><div class="commit-msg">ляля2</div><div class="commit-date">01 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">93ebaad</div><div class="commit-msg">ляля3</div><div class="commit-date">01 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">98c379f</div><div class="commit-msg">Косячник</div><div class="commit-date">02 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">7f55365</div><div class="commit-msg">Delete test2.html</div><div class="commit-date">02 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">94bf3d3</div><div class="commit-msg">Косячник</div><div class="commit-date">02 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">cccf5ce</div><div class="commit-msg">soso</div><div class="commit-date">02 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">b5d1fce</div><div class="commit-msg">мур</div><div class="commit-date">02 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">1e242c7</div><div class="commit-msg">мур-мур</div><div class="commit-date">02 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">3b2dc11</div><div class="commit-msg">Add files via upload</div><div class="commit-date">03 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">083cb33</div><div class="commit-msg">Победа!</div><div class="commit-date">03 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">66f8aaf</div><div class="commit-msg">кот</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">285e197</div><div class="commit-msg">котяра</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">40cb3dd</div><div class="commit-msg">Котострофа</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">a38d4c4</div><div class="commit-msg">Котобаза</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">899c987</div><div class="commit-msg">1</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">b7099ad</div><div class="commit-msg">2</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">9a25edb</div><div class="commit-msg">2</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">d8197bf</div><div class="commit-msg">3</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">c2fbbb1</div><div class="commit-msg">3</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">48f03a6</div><div class="commit-msg">Update index.html3</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">fafa8c3</div><div class="commit-msg">3</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">cd110e1</div><div class="commit-msg">4tema</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">2da4146</div><div class="commit-msg">4tema.html</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">e825686</div><div class="commit-msg">5tema</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">c4ccaa7</div><div class="commit-msg">Besty</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">8a9eb65</div><div class="commit-msg">sexty</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">37ec17d</div><div class="commit-msg">shmexty</div><div class="commit-date">04 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">36821e3</div><div class="commit-msg">Finaly index.html</div><div class="commit-date">08 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">9b95afa</div><div class="commit-msg">I am the chempion script.js</div><div class="commit-date">08 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">086580f</div><div class="commit-msg">The end styles.css</div><div class="commit-date">08 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">5c7eaf5</div><div class="commit-msg">Update index.html</div><div class="commit-date">09 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">a173073</div><div class="commit-msg">function_ready index.html</div><div class="commit-date">10 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">465e720</div><div class="commit-msg">fun_ready styles.css</div><div class="commit-date">10 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">3c7b933</div><div class="commit-msg">Admin_ready_js</div><div class="commit-date">10 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">6cfb34c</div><div class="commit-msg">Update styles.css</div><div class="commit-date">10 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">ce9147f</div><div class="commit-msg">Update script.js</div><div class="commit-date">10 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">81c6c47</div><div class="commit-msg">The end index.html</div><div class="commit-date">10 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">23cd6b7</div><div class="commit-msg">Ready script.js</div><div class="commit-date">10 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">10bdcee</div><div class="commit-msg">Ready styles.css</div><div class="commit-date">10 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">951d1db</div><div class="commit-msg">Ready index.html</div><div class="commit-date">10 июн 2026</div></div>
+    <div class="commit-item"><div class="commit-hash">894745a</div><div class="commit-msg">Update styles.css</div><div class="commit-date">11 июн 2026</div></div>
   </div>
-
 </div>
 
-<div class="nav">
-  <button class="nav-btn" onclick="go(-1)">← Назад</button>
-  <div class="dots" id="dots"></div>
-  <button class="nav-btn" onclick="go(1)">Далее →</button>
+  <!-- Ключевые коммиты -->
+  <div class="gallery-label">Ключевые коммиты с доказательной ценностью</div>
+  <div class="commit-list reveal">
+    <div class="commit-item">
+      <div class="commit-hash">c2bdce2</div>
+      <div class="commit-msg">Initial commit — первый коммит Test-Education, файл README (7 мая)</div>
+      <div class="commit-date">07 мая 2026</div>
+    </div>
+    <div class="commit-item">
+      <div class="commit-hash">086580f</div>
+      <div class="commit-msg">The end styles.css — финальная светлая тема: diff +1027 / -64 строк</div>
+      <div class="commit-date commit-lines"><span class="plus">+1027</span> <span class="minus">-64</span></div>
+    </div>
+    <div class="commit-item">
+      <div class="commit-hash">9b95afa</div>
+      <div class="commit-msg">I am the chempion script.js — MODULES_BY_ROLE все роли: +4699 / -150 строк</div>
+      <div class="commit-date commit-lines"><span class="plus">+4699</span> <span class="minus">-150</span></div>
+    </div>
+    <div class="commit-item">
+      <div class="commit-hash">36821e3</div>
+      <div class="commit-msg">Finaly index.html — финальный HTML с «Господин хакер» комментарием: +416 строк</div>
+      <div class="commit-date commit-lines"><span class="plus">+416</span> <span class="minus">-68</span></div>
+    </div>
+    <div class="commit-item">
+      <div class="commit-hash">3c7b933</div>
+      <div class="commit-msg">Admin_ready_js — панель администратора: diff +1027 / -393 строк</div>
+      <div class="commit-date commit-lines"><span class="plus">+1027</span> <span class="minus">-393</span></div>
+    </div>
+    <div class="commit-item">
+      <div class="commit-hash">Jun 11</div>
+      <div class="commit-msg">Последний коммит — 5 часов до защиты диплома (repo: Employee_education)</div>
+      <div class="commit-date">11 июня 2026</div>
+    </div>
+  </div>
+
+  <br>
+
+  <!-- Скриншоты GitHub -->
+  <div class="gallery-label">Скриншоты репозиториев и коммитов</div>
+  <div class="gallery-grid cols-2 reveal">
+
+    <div class="screenshot-card" onclick="openLightbox('github-both-repos.png', 'Оба репозитория', 'Test-Education (77 коммитов) и Employee_education (51 коммит) — оба созданы одним аккаунтом GitHub. Видны Contributors и даты последних коммитов.')">
+      <div class="sc-img-wrap">
+        <img src="github-both-repos.png" alt="Оба репозитория" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📁</div><span>github-both-repos.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">GITHUB · 001</div>
+        <div class="sc-title">Оба репозитория: 77 + 51 коммитов</div>
+        <div class="sc-desc">Test-Education и Employee_education. Один аккаунт, два репозитория, 128 коммитов суммарно.</div>
+        <span class="sc-badge badge-green">Авторство подтверждено</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('github-repo2-main.png', 'Главная Test-Education', 'Репозиторий Test-Education: 77 коммитов, 3 файла (index.html, script.js, styles.css). Финальная архитектура проекта.')">
+      <div class="sc-img-wrap">
+        <img src="github-repo2-main.png" alt="Test-Education main" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📄</div><span>github-repo2-main.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">GITHUB · 002</div>
+        <div class="sc-title">Test-Education: главная страница репозитория</div>
+        <div class="sc-desc">77 коммитов, файлы index.html, script.js, styles.css. Трёхфайловая архитектура проекта.</div>
+        <span class="sc-badge badge-purple">Основной репозиторий</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('github-repo2-commits-recent.png', 'Свежие коммиты Test-Education', 'Коммиты 8 и 7 июня: Admin_panel.js, Change_password — видна активная разработка функциональности за неделю до защиты.')">
+      <div class="sc-img-wrap">
+        <img src="github-repo2-commits-recent.png" alt="Свежие коммиты" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📝</div><span>github-repo2-commits-recent.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">GITHUB · 003</div>
+        <div class="sc-title">Коммиты 7–8 июня: Admin panel, пароли</div>
+        <div class="sc-desc">Admin_panel.js, Change_password — активная разработка функциональности за неделю до защиты.</div>
+        <span class="sc-badge badge-amber">Недавняя разработка</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('github-repo2-first-commit.png', 'Первый коммит Test-Education', 'Коммит c2bdce2 «Initial commit» от 7 мая 2026 — точка отсчёта. Файл README.md. Отсюда вырос весь проект.')">
+      <div class="sc-img-wrap">
+        <img src="github-repo2-first-commit.png" alt="Первый коммит" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>🌱</div><span>github-repo2-first-commit.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">GITHUB · 004</div>
+        <div class="sc-title">Первый коммит: c2bdce2, 7 мая 2026</div>
+        <div class="sc-desc">«Initial commit» — начало разработки. README.md. 36 дней до финальной версии.</div>
+        <span class="sc-badge badge-green">Точка отсчёта</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('github-commit-css-diff.png', 'Diff: styles.css +1027 строк', 'Коммит 086580f «The end styles.css»: добавлено 1027 строк CSS для светлой темы. Такой объём изменений говорит о глубокой ручной работе.')">
+      <div class="sc-img-wrap">
+        <img src="github-commit-css-diff.png" alt="CSS diff" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>🎨</div><span>github-commit-css-diff.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">GITHUB · 005</div>
+        <div class="sc-title">Diff: styles.css — светлая тема +1027 строк</div>
+        <div class="sc-desc">Коммит «The end styles.css»: +1027 / -64. CSS переменные, адаптивность, анимации — всё вручную.</div>
+        <span class="sc-badge badge-amber">+1027 строк CSS</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('github-commit-js-modules.png', 'Diff: script.js +4699 строк', 'Коммит 9b95afa «I am the chempion script.js»: добавлен массив MODULES_BY_ROLE для всех 5 ролей. +4699 строк за один коммит.')">
+      <div class="sc-img-wrap">
+        <img src="github-commit-js-modules.png" alt="JS modules diff" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>⚙️</div><span>github-commit-js-modules.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">GITHUB · 006</div>
+        <div class="sc-title">Diff: script.js — MODULES_BY_ROLE +4699 строк</div>
+        <div class="sc-desc">«I am the chempion» — добавлены все 5 ролей с вопросами теста на русском. Объём исключает случайность.</div>
+        <span class="sc-badge badge-red">+4699 строк JS</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('github-commit-html-diff.png', 'Diff: index.html с подписью автора', 'Коммит 36821e3 «Finaly index.html»: +416 / -68. Видна строка «Господин хакер, пожалуйста, не трогайте» — личная подпись автора в коде.')">
+      <div class="sc-img-wrap">
+        <img src="github-commit-html-diff.png" alt="HTML diff" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📄</div><span>github-commit-html-diff.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">GITHUB · 007</div>
+        <div class="sc-title">Diff: index.html с «Господин хакер» подписью</div>
+        <div class="sc-desc">«Финальный» HTML коммит. Содержит личный комментарий-подпись автора прямо в коде.</div>
+        <span class="sc-badge badge-green">Личная подпись в коде</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('github-commit-admin-js.png', 'Diff: Admin panel script.js', 'Коммит 3c7b933 «Admin_ready_js»: +1027 / -393 строк. Полная панель администратора с историей изменений, откатами, превью.')">
+      <div class="sc-img-wrap">
+        <img src="github-commit-admin-js.png" alt="Admin JS diff" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>🛠️</div><span>github-commit-admin-js.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">GITHUB · 008</div>
+        <div class="sc-title">Diff: Панель администратора +1027 строк</div>
+        <div class="sc-desc">«Admin_ready_js» — функции откатов изменений, история контента, локальный превью. Сложная авторская система.</div>
+        <span class="sc-badge badge-purple">Авторская архитектура</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('github-repo1-commits-top.png', 'Коммиты Employee_education: июнь', 'Коммиты репозитория Employee_education: 11, 10, 9, 8 июня. Видна ежедневная работа вплоть до дня защиты.')">
+      <div class="sc-img-wrap">
+        <img src="github-repo1-commits-top.png" alt="Employee_education commits" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📅</div><span>github-repo1-commits-top.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">GITHUB · 009</div>
+        <div class="sc-title">Employee_education: коммиты 8–11 июня</div>
+        <div class="sc-desc">Ежедневная активность вплоть до дня защиты. 11 июня — последний коммит за 5 часов до комиссии.</div>
+        <span class="sc-badge badge-amber">День защиты</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('github-repo1-commits-mid.png', 'Коммиты: «кот», «котяра», «Косячник»', 'Коммиты с неформальными названиями «кот», «котяра», «Косячник» — это реальный стиль разработчика. Никто не придумывает такие названия для плагиата.')">
+      <div class="sc-img-wrap">
+        <img src="github-repo1-commits-mid.png" alt="Неформальные коммиты" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>🐱</div><span>github-repo1-commits-mid.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">GITHUB · 010</div>
+        <div class="sc-title">Коммиты «кот», «котяра», «Косячник» — авторский стиль</div>
+        <div class="sc-desc">Неформальные названия коммитов — признак живой разработки. Плагиатор не придумывает имена коммитов.</div>
+        <span class="sc-badge badge-green">Авторский почерк</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DATABASE -->
+<section id="database">
+  <div class="section-eyebrow">// база данных supabase</div>
+  <h2 class="section-title">10 таблиц, реальные пользователи, живые данные</h2>
+  <p class="section-desc">База данных проекта ib-academy привязана к email ko-23-190@turan-edu.kz. 498 записей в журнале изменений доказывают недели реальной работы.</p>
+
+  <!-- Таблица таблиц БД -->
+  <div class="gallery-label">Структура базы данных (10 таблиц)</div>
+  <div class="db-table-wrap reveal">
+    <table class="db-table">
+      <thead>
+        <tr>
+          <th>Таблица</th>
+          <th>Назначение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="val-str">content_history</td><td>Журнал всех изменений контента (git-подобный)</td></tr>
+        <tr><td class="val-str">quiz_content</td><td>Вопросы тестов для 5 ролей (200+ вопросов на русском)</td></tr>
+        <tr><td class="val-str">modules_content</td><td>Учебные модули для каждой должности</td></tr>
+        <tr><td class="val-str">profiles</td><td>Профили зарегистрированных пользователей</td></tr>
+        <tr><td class="val-str">quiz_results</td><td>Результаты тестирования пользователей</td></tr>
+        <tr><td class="val-str">module_progress</td><td>Прогресс прохождения модулей</td></tr>
+        <tr><td class="val-str">certificates</td><td>Выданные сертификаты (silver/gold/platinum/crystal)</td></tr>
+        <tr><td class="val-str">threats_content</td><td>6 типов угроз ИБ с уровнями риска</td></tr>
+        <tr><td class="val-str">news_content</td><td>6 реальных кейсов ИБ (WannaCry, SolarWinds и др.)</td></tr>
+        <tr><td class="val-str">tips_content</td><td>12 советов по кибергигиене</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Скриншоты БД -->
+  <div class="gallery-label">Скриншоты из Supabase Dashboard</div>
+  <div class="gallery-grid cols-2 reveal">
+
+    <div class="screenshot-card" onclick="openLightbox('db-project-settings.png', 'Настройки проекта Supabase', 'Проект ib-academy, ID: unndknzvmeppextuycaf, Owner: ko-23-190@turan-edu.kz — студенческий email привязан к проекту напрямую.')">
+      <div class="sc-img-wrap">
+        <img src="db-project-settings.png" alt="Supabase Settings" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>⚙️</div><span>db-project-settings.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">DATABASE · 001</div>
+        <div class="sc-title">Настройки: Owner ko-23-190@turan-edu.kz</div>
+        <div class="sc-desc">Проект ib-academy принадлежит студенческому email. ID проекта уникален и вшит в код.</div>
+        <span class="sc-badge badge-green">Студенческий email владельца</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('db-infrastructure.png', 'Инфраструктура Supabase', 'Postgres 17.6, Auth 2.189.0, PostgREST 14.5. График активности 4–11 июня 2026 показывает реальные обращения к БД.')">
+      <div class="sc-img-wrap">
+        <img src="db-infrastructure.png" alt="Supabase Infrastructure" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>🏗️</div><span>db-infrastructure.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">DATABASE · 002</div>
+        <div class="sc-title">Инфраструктура: Postgres 17.6, активность 4–11 июня</div>
+        <div class="sc-desc">График активности базы данных в период финальной разработки — реальные запросы, реальный трафик.</div>
+        <span class="sc-badge badge-purple">Живые данные</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('db-tables-list.png', 'Список всех 10 таблиц', 'Table Editor с 10 таблицами проекта: certificates, content_history, module_progress, modules_content, news_content, profiles, quiz_content, quiz_results, threats_content, tips_content.')">
+      <div class="sc-img-wrap">
+        <img src="db-tables-list.png" alt="Все таблицы БД" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📊</div><span>db-tables-list.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">DATABASE · 003</div>
+        <div class="sc-title">10 таблиц проекта в Table Editor</div>
+        <div class="sc-desc">Полная схема данных: content_history, quiz_content, module_progress и другие — спроектированы под конкретные задачи.</div>
+        <span class="sc-badge badge-purple">Авторская схема</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('db-auth-users.png', 'Реальные пользователи в Auth', 'Authentication → Users: «Даниэль Утеев», «Афанасьев Артём» и другие пользователи с датами регистрации май–июнь 2026.')">
+      <div class="sc-img-wrap">
+        <img src="db-auth-users.png" alt="Auth Users" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>👤</div><span>db-auth-users.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">DATABASE · 004</div>
+        <div class="sc-title">Пользователи: Даниэль Утеев, Афанасьев Артём</div>
+        <div class="sc-desc">Авторы проекта зарегистрированы в системе. Регистрации с мая 2026 — реальные тесты сайта в процессе разработки.</div>
+        <span class="sc-badge badge-green">Авторы в системе</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('db-table-profiles.png', 'Таблица profiles: пользователи', 'Реальные пользователи с email, именами, ролями (employee/manager/it/hr/admin). Даты регистрации с мая по июнь 2026.')">
+      <div class="sc-img-wrap">
+        <img src="db-table-profiles.png" alt="Profiles table" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📋</div><span>db-table-profiles.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">DATABASE · 005</div>
+        <div class="sc-title">Таблица profiles: реальные пользователи с ролями</div>
+        <div class="sc-desc">Email, имена, должности (employee, manager, it, hr, admin) — многоролевая система разработана с нуля.</div>
+        <span class="sc-badge badge-amber">Реальные пользователи</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('db-table-quiz-results.png', 'Таблица quiz_results: результаты тестов', 'Результаты тестирования: score, percentage, module_breakdown на русском — реальные данные реальных пользователей, которые проходили тест.')">
+      <div class="sc-img-wrap">
+        <img src="db-table-quiz-results.png" alt="Quiz results" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📊</div><span>db-table-quiz-results.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">DATABASE · 006</div>
+        <div class="sc-title">Результаты тестов: реальное использование платформы</div>
+        <div class="sc-desc">Живые данные тестирования с разбивкой по модулям — платформа реально работала и собирала данные.</div>
+        <span class="sc-badge badge-green">Живые данные тестов</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('db-table-modules-content.png', 'Таблица modules_content', 'Обучающие модули для ролей it, hr, admin, employee с названиями на русском, video_id YouTube, длительностью видео — авторский контент.')">
+      <div class="sc-img-wrap">
+        <img src="db-table-modules-content.png" alt="Modules content" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📚</div><span>db-table-modules-content.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">DATABASE · 007</div>
+        <div class="sc-title">Учебные модули: 5 ролей, русский язык, YouTube</div>
+        <div class="sc-desc">Контент для каждой должности (6 модулей × 5 ролей = 30 единиц) хранится и редактируется через панель администратора.</div>
+        <span class="sc-badge badge-purple">Авторский контент</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('db-table-history.png', 'content_history: 498 записей', 'Журнал изменений контента с session_id, content_type, before_data/after_data. 498 строк — каждое изменение через панель администратора зафиксировано.')">
+      <div class="sc-img-wrap">
+        <img src="db-table-history.png" alt="Content history" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📜</div><span>db-table-history.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">DATABASE · 008</div>
+        <div class="sc-title">content_history: 498 записей — история всех изменений</div>
+        <div class="sc-desc">Каждое изменение контента через админ-панель записывается с before/after данными. 498 записей — недели работы.</div>
+        <span class="sc-badge badge-red">498 записей истории</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('db-schema-visualizer-1.png', 'Схема БД: связи между таблицами', 'Visual schema: module_progress, quiz_results, profiles, certificates, modules_content, quiz_content — связи по user_id, чёткая реляционная структура.')">
+      <div class="sc-img-wrap">
+        <img src="db-schema-visualizer-1.png" alt="DB Schema 1" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>🔗</div><span>db-schema-visualizer-1.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">DATABASE · 009</div>
+        <div class="sc-title">Schema Visualizer: связи между 6 таблицами</div>
+        <div class="sc-desc">Реляционная схема: profiles → quiz_results, module_progress, certificates. Спроектировано под конкретную задачу.</div>
+        <span class="sc-badge badge-purple">Авторское проектирование</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('db-database-tables.png', 'Database Tables: все метрики', 'Database → Tables: 10 таблиц с числом колонок, строк и точным размером. content_history: 498 строк, 560kb — главное доказательство истории работы.')">
+      <div class="sc-img-wrap">
+        <img src="db-database-tables.png" alt="Database tables metrics" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📐</div><span>db-database-tables.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">DATABASE · 010</div>
+        <div class="sc-title">Метрики всех таблиц: строки, размер</div>
+        <div class="sc-desc">content_history: 498 строк, 560kb. quiz_content: 251 строка, 456kb. Реальные объёмы данных живого проекта.</div>
+        <span class="sc-badge badge-amber">Живые метрики</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- КОД -->
+<section id="code">
+  <div class="section-eyebrow">// архитектура и код</div>
+  <h2 class="section-title">Авторский код — не шаблон</h2>
+  <p class="section-desc">Три файла: 6000+ строк JS, 2000+ строк CSS, 900+ строк HTML. Каждая функция написана под конкретную задачу проекта.</p>
+
+  <!-- Личная подпись в коде -->
+  <div class="gallery-label">Личная подпись автора в коде (index.html)</div>
+  <div class="code-block reveal">
+    <div class="code-header">
+      <div class="code-dots">
+        <div class="code-dot dot-red"></div>
+        <div class="code-dot dot-amber"></div>
+        <div class="code-dot dot-green"></div>
+      </div>
+      <div class="code-filename">index.html — строка 1</div>
+    </div>
+    <div class="code-body">
+<span class="cm">&lt;!-- admin@ibacademy.ru</span><br>
+<span class="cm">h3#/KquAr7Va9i% --&gt;</span><br>
+<span class="cm">&lt;!-- Господин хакер, пожалуйста, не трогайте.</span><br>
+<span class="cm">     Разработчик злой и неадекватный, КУСАЕТСЯ! --&gt;</span>
+    </div>
+  </div>
+
+  <!-- Код Supabase подключения -->
+  <div class="gallery-label">Уникальный API-ключ проекта (script.js)</div>
+  <div class="code-block reveal">
+    <div class="code-header">
+      <div class="code-dots">
+        <div class="code-dot dot-red"></div>
+        <div class="code-dot dot-amber"></div>
+        <div class="code-dot dot-green"></div>
+      </div>
+      <div class="code-filename">script.js — Supabase конфигурация</div>
+    </div>
+    <div class="code-body">
+<span class="kw">const</span> <span>SUPABASE_URL</span> = <span class="str">"https://unndknzvmeppextuycaf.supabase.co"</span>;<br>
+<span class="kw">const</span> <span>SUPABASE_ANON_KEY</span> =<br>
+&nbsp;&nbsp;<span class="str">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhY..."</span>;<br>
+<br>
+<span class="cm">// Этот ключ уникален для проекта ib-academy.</span><br>
+<span class="cm">// Проект принадлежит ko-23-190@turan-edu.kz</span><br>
+<span class="cm">// Чужой код не может обращаться к чужой базе данных.</span><br>
+<br>
+<span class="kw">let</span> _supabase = <span class="num">null</span>;<br>
+<span class="kw">function</span> <span class="fn">getSupabase</span>() {<br>
+&nbsp;&nbsp;<span class="kw">if</span> (!_supabase)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_supabase = window.supabase.<span class="fn">createClient</span>(SUPABASE_URL, SUPABASE_ANON_KEY);<br>
+&nbsp;&nbsp;<span class="kw">return</span> _supabase;<br>
+}
+    </div>
+  </div>
+
+  <!-- Авторская система истории изменений -->
+  <div class="gallery-label">Авторская git-подобная система откатов (script.js)</div>
+  <div class="code-block reveal">
+    <div class="code-header">
+      <div class="code-dots">
+        <div class="code-dot dot-red"></div>
+        <div class="code-dot dot-amber"></div>
+        <div class="code-dot dot-green"></div>
+      </div>
+      <div class="code-filename">script.js — recordChange() и revertChangeById()</div>
+    </div>
+    <div class="code-body">
+<span class="cm">// Запись каждого изменения контента в БД (git-подобный журнал)</span><br>
+<span class="kw">async function</span> <span class="fn">recordChange</span>(contentType, contentKey, beforeData, afterData) {<br>
+&nbsp;&nbsp;<span class="kw">const</span> sb = <span class="fn">getSupabase</span>();<br>
+&nbsp;&nbsp;<span class="kw">const</span> sessionId = <span class="fn">getSessionId</span>();<br>
+&nbsp;&nbsp;<span class="kw">await</span> sb.<span class="fn">from</span>(<span class="str">"content_history"</span>).<span class="fn">insert</span>({<br>
+&nbsp;&nbsp;&nbsp;&nbsp;session_id: sessionId,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;content_type: contentType, <span class="cm">// 'module'|'quiz'|'threat'|'news'|'tip'</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;content_key: contentKey,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;before_data: beforeData, <span class="cm">// что было ДО изменения</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;after_data: afterData, <span class="cm">// что стало ПОСЛЕ</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;changed_at: <span class="kw">new</span> <span class="fn">Date</span>().<span class="fn">toISOString</span>(),<br>
+&nbsp;&nbsp;});<br>
+}<br>
+<br>
+<span class="cm">// 498 записей в content_history = 498 реальных изменений контента</span>
+    </div>
+  </div>
+
+  <!-- Скриншоты кода -->
+  <div class="gallery-label">Скриншоты из редактора кода</div>
+  <div class="gallery-grid cols-2 reveal">
+
+    <div class="screenshot-card" onclick="openLightbox('code-js-top.png', 'Начало script.js', 'Начало файла script.js: SUPABASE_URL, SUPABASE_ANON_KEY, getSupabase(), переменные currentUser, ROLE_LABELS — базовая архитектура проекта.')">
+      <div class="sc-img-wrap">
+        <img src="code-js-top.png" alt="JS top" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📝</div><span>code-js-top.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">CODE · 001</div>
+        <div class="sc-title">script.js: архитектура и Supabase подключение</div>
+        <div class="sc-desc">Начало файла: глобальные переменные, ROLE_LABELS, getSupabase() — фундамент всей логики.</div>
+        <span class="sc-badge badge-purple">Базовая архитектура</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('code-js-modules.png', 'MODULES_BY_ROLE в коде', 'Массив MODULES_BY_ROLE: 6 модулей для должности employee с описаниями, тегами, duration, videoId — весь контент на русском, специфичный для казахстанского рынка.')">
+      <div class="sc-img-wrap">
+        <img src="code-js-modules.png" alt="Modules code" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>📚</div><span>code-js-modules.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">CODE · 002</div>
+        <div class="sc-title">MODULES_BY_ROLE: контент для 5 должностей</div>
+        <div class="sc-desc">6 модулей × 5 ролей = 30 единиц контента на русском. Казахстанская специфика, ссылки на законы РК.</div>
+        <span class="sc-badge badge-green">Оригинальный контент</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('code-js-questions.png', 'QUESTIONS_BY_ROLE: вопросы теста', 'Первые вопросы для роли employee: CIA-триада, социальная инженерия, фишинг — вопросы на русском с вариантами ответов и объяснениями.')">
+      <div class="sc-img-wrap">
+        <img src="code-js-questions.png" alt="Questions code" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>❓</div><span>code-js-questions.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">CODE · 003</div>
+        <div class="sc-title">QUESTIONS_BY_ROLE: 200+ вопросов на русском</div>
+        <div class="sc-desc">40 вопросов для каждой из 5 ролей. CIA-триада, фишинг, социальная инженерия — оригинальный авторский контент.</div>
+        <span class="sc-badge badge-amber">200+ вопросов</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('code-js-auth.png', 'Функция doMaoLogin()', 'Авторизация через Supabase: анимация кнопки «ВХОДИМ», обработка ошибок на русском, автоматическая загрузка профиля после входа.')">
+      <div class="sc-img-wrap">
+        <img src="code-js-auth.png" alt="Auth code" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>🔐</div><span>code-js-auth.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">CODE · 004</div>
+        <div class="sc-title">doMaoLogin(): авторизация с анимацией</div>
+        <div class="sc-desc">Supabase auth, анимация «ВХОДИМ», русские сообщения об ошибках — детальная UX-проработка.</div>
+        <span class="sc-badge badge-purple">Авторский UX</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('code-js-cert.png', 'Логика сертификатов', 'calculateCertLevel(): silver/gold/platinum/crystal в зависимости от числа пройденных ролей и процента правильных ответов.')">
+      <div class="sc-img-wrap">
+        <img src="code-js-cert.png" alt="Certificate code" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>🏆</div><span>code-js-cert.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">CODE · 005</div>
+        <div class="sc-title">calculateCertLevel(): 4-уровневая система сертификатов</div>
+        <div class="sc-desc">silver → gold → platinum → crystal. Уникальная логика прогрессии, привязанная к БД.</div>
+        <span class="sc-badge badge-green">Уникальная логика</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('code-js-admin.png', 'Панель администратора: publish', 'publishAdminPreview(): публикация локальных изменений в БД для всех пользователей. Сложная логика с откатами и историей.')">
+      <div class="sc-img-wrap">
+        <img src="code-js-admin.png" alt="Admin code" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>🛠️</div><span>code-js-admin.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">CODE · 006</div>
+        <div class="sc-title">publishAdminPreview(): публикация в БД</div>
+        <div class="sc-desc">Сложная система: локальный превью → проверка → публикация для всех. Git-подобный подход к контенту.</div>
+        <span class="sc-badge badge-red">Сложная архитектура</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('code-css-variables.png', 'CSS переменные: тёмная и светлая тема', 'styles.css: CSS переменные :root (тёмная тема) и body.light (светлая тема) — полный набор токенов для двух цветовых схем.')">
+      <div class="sc-img-wrap">
+        <img src="code-css-variables.png" alt="CSS variables" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>🎨</div><span>code-css-variables.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">CODE · 007</div>
+        <div class="sc-title">styles.css: система тёмной и светлой темы</div>
+        <div class="sc-desc">CSS переменные :root и body.light — полноценная двухтемная система с анимациями и адаптивностью.</div>
+        <span class="sc-badge badge-amber">Двухтемная система</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('db-rls-policies.png', 'RLS политики безопасности', 'Authentication → Policies: RLS политики для всех таблиц — Row Level Security настроен вручную под требования безопасности проекта.')">
+      <div class="sc-img-wrap">
+        <img src="db-rls-policies.png" alt="RLS Policies" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>🔒</div><span>db-rls-policies.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">CODE · 008</div>
+        <div class="sc-title">RLS политики: безопасность на уровне строк</div>
+        <div class="sc-desc">Row Level Security настроен для каждой таблицы. Это не шаблон — это ручная настройка под архитектуру проекта.</div>
+        <span class="sc-badge badge-green">Ручная настройка</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ХРОНОЛОГИЯ -->
+<section>
+  <div class="section-eyebrow">// хронология разработки</div>
+  <h2 class="section-title">От идеи до финального продукта</h2>
+  <p class="section-desc">36 дней итеративной разработки, задокументированной в GitHub.</p>
+
+  <div class="timeline reveal">
+    <div class="tl-item">
+      <div class="tl-date">7 мая 2026</div>
+      <div class="tl-title">Initial commit — старт разработки</div>
+      <div class="tl-desc">Первый коммит в обоих репозиториях. README.md, базовая структура проекта. Оба репозитория созданы с нуля.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Май 2026</div>
+      <div class="tl-title">Архитектура: HTML + CSS + JS + Supabase</div>
+      <div class="tl-desc">Проектирование базы данных (10 таблиц), выбор стека, первые компоненты интерфейса. Создан проект ib-academy в Supabase, привязан студенческий email.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Май — начало июня</div>
+      <div class="tl-title">Основная функциональность: авторизация, модули, тест</div>
+      <div class="tl-desc">Реализована система ролей (employee/manager/it/hr/admin), 200+ вопросов теста на русском, прогресс модулей, сохранение результатов в БД.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">5–8 июня 2026</div>
+      <div class="tl-title">Панель администратора и история изменений</div>
+      <div class="tl-desc">Admin_panel.js — полная CMS с git-подобными откатами, локальным превью и журналом изменений. 498 записей в content_history.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">8–10 июня 2026</div>
+      <div class="tl-title">Финальная полировка: светлая тема, сертификаты, анимации</div>
+      <div class="tl-desc">«The end styles.css» (+1027 строк): светлая тема, анимации, адаптивность. Система сертификатов 4 уровней с печатью.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">11 июня 2026, -5 часов до защиты</div>
+      <div class="tl-title">Последний коммит в Employee_education</div>
+      <div class="tl-desc">Работа над проектом продолжалась вплоть до дня защиты. Это невозможно при плагиате — плагиатор не дорабатывает.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<div class="divider"></div>
+
+<!-- АДМИН EMAIL -->
+<section id="email-myth">
+  <div class="section-eyebrow">// разбор претензии комиссии</div>
+  <h2 class="section-title">«Почта admin@ibacademy.ru — доказательство плагиата»?</h2>
+  <p class="section-desc">На защите этот комментарий в коде стал главным аргументом против меня. Разберём его по фактам.</p>
+
+  <div class="code-block reveal">
+    <div class="code-header">
+      <div class="code-dots">
+        <div class="code-dot dot-red"></div>
+        <div class="code-dot dot-amber"></div>
+        <div class="code-dot dot-green"></div>
+      </div>
+      <div class="code-filename">index.html — строка 1 (тот самый комментарий)</div>
+    </div>
+    <div class="code-body">
+<span class="cm">&lt;!-- admin@ibacademy.ru</span><br>
+<span class="cm">h3#/KquAr7Va9i% --&gt;</span><br>
+<span class="cm">&lt;!-- Господин хакер, пожалуйста, не трогайте.</span><br>
+<span class="cm">     Разработчик злой и неадекватный, КУСАЕТСЯ! --&gt;</span>
+    </div>
+  </div>
+
+  <div class="arguments-grid reveal">
+    <div class="arg-card">
+      <span class="arg-icon">🌐</span>
+      <div class="arg-title">Зона .ru — это не аргумент</div>
+      <div class="arg-text">Зона .ru доступна для регистрации кому угодно в мире — это коммерческий домен верхнего уровня, как .com или .kz. Принадлежность зоны не доказывает происхождение кода: миллионы доменов в .ru, .io, .dev регистрируются разработчиками из любых стран ради звучности или привычки.</div>
+    </div>
+    <div class="arg-card">
+      <span class="arg-icon">🚫</span>
+      <div class="arg-title">Такого email не существует</div>
+      <div class="arg-text">admin@ibacademy.ru — несуществующий, никогда не регистрировавшийся адрес. Это вымышленный «декоративный» email, придуманный мной для атмосферы внутри комментария-шутки. Проверить можно: домен ibacademy.ru не делегирован, почтового сервера нет.</div>
+    </div>
+    <div class="arg-card">
+      <span class="arg-icon">🗄️</span>
+      <div class="arg-title">Реальный email — другой, и он мой</div>
+      <div class="arg-text">Реальный проект подключён к Supabase через email <strong style="color:#fff">ko-23-190@turan-edu.kz</strong> — это видно в настройках проекта (см. раздел «База данных»). Это мой студенческий email университета Туран. Именно он владеет базой, а не выдуманный .ru-адрес из шутки.</div>
+    </div>
+    <div class="arg-card">
+      <span class="arg-icon">✍️</span>
+      <div class="arg-title">Я сам вписал этот комментарий</div>
+      <div class="arg-text">Комментарий с «admin@ibacademy.ru» и фразой «Господин хакер, пожалуйста, не трогайте... КУСАЕТСЯ!» — мой собственный авторский текст, добавленный через редактор кода и закоммиченный в мой же репозиторий на GitHub. Это видно в истории коммитов index.html.</div>
+    </div>
+    <div class="arg-card">
+      <span class="arg-icon">🎭</span>
+      <div class="arg-title">Это распространённый приём разработчиков</div>
+      <div class="arg-text">Шутливые комментарии-«пугалки» для отпугивания случайных людей от правки кода — известная практика веб-разработки. Вымышленный домен .ru здесь играет роль «зловещего админа» для атмосферы, а не указывает на реального владельца.</div>
+    </div>
+    <div class="arg-card">
+      <span class="arg-icon">🔍</span>
+      <div class="arg-title">Логика «.ru = не моё» рассыпается сама</div>
+      <div class="arg-text">Если бы я скопировал чужой проект, зачем мне самому вписывать в него шутку с несуществующим email и подписывать «разработчик злой и неадекватный»? Эта фраза от первого лица — прямое указание на автора, то есть на меня.</div>
+    </div>
+  </div>
+
+  <div class="gallery-label">Скриншот: тот самый комментарий в редакторе кода</div>
+  <div class="gallery-grid reveal">
+    <div class="screenshot-card" onclick="openLightbox('code-html-admin-comment.png', 'Комментарий admin@ibacademy.ru в index.html', 'Строка 1 файла index.html: вымышленный email admin@ibacademy.ru и авторская шутка «Господин хакер, пожалуйста, не трогайте». Несуществующий адрес, придуманный лично автором и внесённый напрямую через код и БД.')">
+      <div class="sc-img-wrap">
+        <img src="code-html-admin-comment.png" alt="Admin email comment" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>💬</div><span>code-html-admin-comment.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">CODE · 009</div>
+        <div class="sc-title">Тот самый комментарий — крупным планом</div>
+        <div class="sc-desc">Вымышленный admin@ibacademy.ru и авторская подпись-шутка. Несуществующий адрес ≠ доказательство плагиата.</div>
+        <span class="sc-badge badge-amber">Разбор претензии</span>
+      </div>
+    </div>
+
+    <div class="screenshot-card" onclick="openLightbox('search-admin-email-not-found.png', 'Поиск admin@ibacademy.ru — нет результатов', 'Поисковик не находит ничего по запросу admin@ibacademy.ru — домен ibacademy.ru не существует, почтового сервера нет. Это вымышленный адрес из шутки в коде.')">
+      <div class="sc-img-wrap">
+        <img src="search-admin-email-not-found.png" alt="Поиск email не дал результатов" onerror="this.parentElement.innerHTML='<div class=\'sc-placeholder\'><div class=\'sc-placeholder-icon\'>🔍</div><span>search-admin-email-not-found.png</span></div>'">
+        <div class="sc-overlay"><div class="sc-overlay-icon">🔍</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-num">CODE · 010</div>
+        <div class="sc-title">Поиск admin@ibacademy.ru — интернет молчит</div>
+        <div class="sc-desc">Ни одного результата по этому адресу. Домен не зарегистрирован, почты не существует — это выдуманный адрес из авторской шутки.</div>
+        <span class="sc-badge badge-green">Домен не существует</span>
+      </div>
+    </div>
+</div>
+  </div>
+</section>
+
+<!-- VERDICT -->
+<section id="verdict">
+  <div class="section-eyebrow">// итог</div>
+  <h2 class="section-title">Вывод однозначен</h2>
+  <p class="section-desc">Совокупность доказательств не оставляет пространства для сомнений.</p>
+
+  <div class="verdict-box reveal">
+    <span class="verdict-icon">✅</span>
+    <div class="verdict-title">Сайт создан Утеевым Даниэлем</div>
+    <div class="verdict-text">
+      128 коммитов с 7 мая по 11 июня 2026 года. База данных, привязанная к студенческому email. 
+      Уникальный API-ключ Supabase, вшитый в код. Личные данные автора в системе. 
+      Авторские комментарии в исходном коде. Это не может быть совпадением — это доказательства.
+    </div>
+
+    <div class="proof-list">
+      <div class="proof-item">
+        <div class="proof-check">✓</div>
+        <div>128 коммитов в двух репозиториях GitHub за 36 дней — зафиксированная хронология разработки</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-check">✓</div>
+        <div>База данных Supabase принадлежит email ko-23-190@turan-edu.kz — студенческому аккаунту автора</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-check">✓</div>
+        <div>Уникальный API-ключ проекта hardcoded в script.js — чужой код не подключится к чужой БД</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-check">✓</div>
+        <div>«Даниэль Утеев» и «Афанасьев Артём» — первые пользователи в auth.users с мая 2026</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-check">✓</div>
+        <div>498 записей в content_history — каждое изменение через admin-панель задокументировано</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-check">✓</div>
+        <div>«Господин хакер, пожалуйста, не трогайте» — личная подпись автора в первой строке HTML</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-check">✓</div>
+        <div>SVG-аватары с именами «Утеев Даниэль» и «Афанасьев Артём» в футере сайта — авторство встроено в дизайн</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-check">✓</div>
+        <div>Коммиты «кот», «котяра», «Косячник» — личный стиль именования, невозможный при копировании</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightboxOnBg(event)">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img class="lightbox-img" id="lightboxImg" src="" alt="">
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+</div>
+
+<!-- SECRET BUDGET OVERLAY -->
+<div id="secret-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0); pointer-events:all;">
+  <div id="secret-dim" style="position:absolute; inset:0; background:#000; opacity:0;"></div>
+  <canvas id="secret-static" style="position:absolute; inset:0; width:100%; height:100%; opacity:0;"></canvas>
+  <div id="secret-content" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0;">
+    <p style="font-family:'JetBrains Mono',monospace; font-size:0.62rem; color:rgba(255,60,60,0.55); letter-spacing:0.17em; text-align:center; margin-bottom:0.9rem; text-transform:uppercase;">Бюджет проекта · Гриф: СЕКРЕТНО</p>
+    <div style="display:flex; flex-wrap:wrap; gap:0.7rem; justify-content:center; max-width:660px;">
+      <div class="budget-card">☕<span>20</span><small>литров кофе</small></div>
+      <div class="budget-card">🍫<span>30</span><small>энерг. батончиков</small></div>
+      <div class="budget-card">🍩<span>2</span><small>пончика</small></div>
+      <div class="budget-card">⚡<span>3</span><small>энергетика</small></div>
+      <div class="budget-card">🥩<span>1</span><small>стейк (заслужили)</small></div>
+    </div>
+    <p id="secret-close-hint" style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:rgba(255,100,100,0.4); margin-top:2rem; letter-spacing:0.1em;">[ нажми куда угодно чтобы закрыть ]</p>
+  </div>
+  <div id="secret-stamp" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:clamp(3rem,8vw,6rem); font-weight:700; color:#ff1a1a; letter-spacing:0.14em; text-align:center; line-height:1.15; transform:rotate(-22deg); -webkit-text-stroke:2px #000; text-shadow:0 0 60px rgba(255,0,0,0.9);">СОВЕРШЕННО<br>СЕКРЕТНО</div>
+</div>
 </div>
 
 <script>
-/* ── NAV ── */
-const TOTAL=6, slides=[...document.querySelectorAll('.slide')];
-let cur=0, busy=false;
-const dotsEl=document.getElementById('dots');
-const ssOverlay=document.getElementById('ss-overlay');
-
-for(let i=0;i<TOTAL;i++){
-  const d=document.createElement('div');
-  d.className='dot'+(i===0?' on':'');
-  d.onclick=()=>goTo(i);
-  dotsEl.appendChild(d);
-}
-function updateDots(){dotsEl.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));}
-
-function showSecretOverlay(){
-  ssOverlay.classList.remove('show');
-  void ssOverlay.offsetWidth;
-  ssOverlay.classList.add('show');
-  setTimeout(() => ssOverlay.classList.remove('show'), 3100);
+// LIGHTBOX
+function openLightbox(src, title, desc) {
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImg');
+  const cap = document.getElementById('lightboxCaption');
+  img.src = src;
+  cap.innerHTML = '<strong>' + title + '</strong> — ' + desc;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
-function goTo(n){
-  if(busy||n===cur||n<0||n>=TOTAL)return;
-  busy=true;
-  const prev=slides[cur], next=slides[n];
-  prev.classList.add('leaving');
-  setTimeout(()=>{
-    prev.classList.remove('active','leaving');
-    cur=n;
-    next.classList.add('active','entering');
-    updateDots();
-    if(n===3) showSecretOverlay();
-    if(n===5) countUp();
-    setTimeout(()=>{next.classList.remove('entering');busy=false;},700);
-  },350);
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
 }
-function go(d){goTo(cur+d);}
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight'||e.key==='ArrowDown') go(1);
-  if(e.key==='ArrowLeft'||e.key==='ArrowUp') go(-1);
+
+function closeLightboxOnBg(e) {
+  if (e.target === document.getElementById('lightbox')) closeLightbox();
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeLightbox();
 });
 
-function countUp(){
-  document.querySelectorAll('#s5 .stat-num[data-target]').forEach(el=>{
-    const target=+el.dataset.target; let v=0;
-    const step=target/20;
-    const iv=setInterval(()=>{v=Math.min(v+step,target);el.textContent=Math.round(v);if(v>=target)clearInterval(iv);},40);
-  });
-}
-
-/* ── AVATAR CANVAS ANIMATIONS ── */
-(function(){
-  const cv=document.getElementById('av0');
-  if(!cv)return;
-  const ctx=cv.getContext('2d');
-  const W=84,H=84,R=42;
-  const chars=('アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789#$%&*<>[]{}|+-=~^').split('');
-  const CELL=8;
-  const cols=Math.floor(W/CELL);
-  const drops=Array.from({length:cols},(_,i)=>({y:-(Math.random()*12|0),speed:.4+Math.random()*.6,len:5+Math.random()*6|0}));
-  const buf=Array.from({length:cols},()=>Array.from({length:Math.ceil(H/CELL)+2},()=>chars[Math.random()*chars.length|0]));
-  function mutate(){const c=Math.random()*cols|0;const r=Math.random()*(H/CELL)|0;buf[c][r]=chars[Math.random()*chars.length|0];}
-  let acc=0,last=0,t=0;
-  function frame(ts){
-    const dt=Math.min(ts-last,50);last=ts;acc+=dt;
-    const step=acc>60;if(step)acc=0;
-    ctx.clearRect(0,0,W,H);ctx.save();
-    ctx.beginPath();ctx.arc(R,R,R,0,Math.PI*2);ctx.clip();
-    ctx.fillStyle='rgba(3,10,26,.55)';ctx.fillRect(0,0,W,H);
-    ctx.font=`bold ${CELL-1}px monospace`;ctx.textAlign='center';
-    drops.forEach((d,ci)=>{
-      const headY=Math.floor(d.y);
-      for(let row=0;row<d.len;row++){
-        const ry=headY-row;if(ry<0||ry>H/CELL)continue;
-        const fade=1-row/d.len;const isHead=row===0;
-        ctx.fillStyle=isHead?`rgba(200,255,255,${.9*fade})`:`rgba(0,212,255,${.7*fade})`;
-        const ch=buf[ci][((ry%buf[ci].length)+buf[ci].length)%buf[ci].length];
-        ctx.fillText(ch,ci*CELL+CELL/2,ry*CELL+CELL-1);
-      }
-      if(step){d.y+=d.speed;if(d.y-d.len>H/CELL){d.y=-(2+Math.random()*8|0);d.speed=.35+Math.random()*.65;d.len=4+Math.random()*7|0;}}
-    });
-    if(Math.random()>.7)mutate();
-    t+=.05;const pulse=.5+.5*Math.sin(t);
-    ctx.beginPath();ctx.arc(R,R,R-1.5,0,Math.PI*2);
-    ctx.strokeStyle=`rgba(0,212,255,${.1+.2*pulse})`;ctx.lineWidth=1.5+pulse*1.5;ctx.stroke();
-    ctx.restore();requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-})();
-
-(function(){
-  const cv=document.getElementById('av1');
-  if(!cv)return;
-  const ctx=cv.getContext('2d');
-  const W=84,H=84,R=42;
-  const N=8;
-  const nodes=Array.from({length:N},(_,i)=>{const a=i/N*Math.PI*2;const r=24+Math.random()*8;return{bx:R+r*Math.cos(a),by:R+r*Math.sin(a),phase:Math.random()*Math.PI*2,speed:.4+Math.random()*.5};});
-  nodes.push({bx:R,by:R,phase:0,speed:.3});
-  let t=0;
-  function getPos(n){const dx=Math.sin(t*n.speed+n.phase)*3;const dy=Math.cos(t*n.speed*1.3+n.phase)*3;return{x:n.bx+dx,y:n.by+dy};}
-  function frame(){
-    ctx.clearRect(0,0,W,H);ctx.save();
-    ctx.beginPath();ctx.arc(R,R,R,0,Math.PI*2);ctx.clip();
-    ctx.fillStyle='rgba(3,10,26,.15)';ctx.fillRect(0,0,W,H);
-    t+=.018;
-    const pts=nodes.map(getPos);
-    for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;const dist=Math.sqrt(dx*dx+dy*dy);if(dist<38){const alpha=(1-dist/38)*.5;ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(0,212,255,${alpha})`;ctx.lineWidth=.8;ctx.stroke();}}}
-    pts.forEach((p,i)=>{const pulse=.5+.5*Math.sin(t*2+i);ctx.beginPath();ctx.arc(p.x,p.y,i===N?3.5:2.2,0,Math.PI*2);ctx.fillStyle=`rgba(0,212,255,${.6+.4*pulse})`;ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,i===N?6:4,0,Math.PI*2);ctx.fillStyle=`rgba(0,212,255,${.1*pulse})`;ctx.fill();});
-    ctx.beginPath();ctx.arc(R,R,R-2,0,Math.PI*2);ctx.strokeStyle=`rgba(0,212,255,${.12+.08*Math.sin(t)})`;ctx.lineWidth=1.5;ctx.stroke();
-    ctx.restore();requestAnimationFrame(frame);
-  }
-  frame();
-})();
-
-/* ── BACKGROUND CANVAS ── */
-const cv=document.getElementById('bg'),ctx=cv.getContext('2d');
-let W,H,stars=[],comets=[],particles=[];
-function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
-resize();window.addEventListener('resize',resize);
-for(let i=0;i<200;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.2,a:Math.random()*.7+.2,tw:Math.random()*2.5+1,tp:Math.random()*Math.PI*2});
-function spawnComet(){const sx=Math.random()<.5?-80:W+80;comets.push({x:sx,y:Math.random()*H*.55,vx:(sx<0?1:-1)*(Math.random()*5+3),vy:Math.random()*1.5+.5,len:Math.random()*140+80,life:0,maxLife:130});}
-setInterval(spawnComet,2200);spawnComet();
-function spawnParticle(){particles.push({x:Math.random()*W,y:H+5,vx:(Math.random()-.5)*.4,vy:-(Math.random()*.6+.2),r:Math.random()*1.4+.4,life:0,maxLife:Math.random()*200+100,c:Math.random()<.7?'0,212,255':'100,160,255'});}
-setInterval(spawnParticle,180);
-let t=0;
-function draw(){
-  ctx.clearRect(0,0,W,H);t+=.012;
-  stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.tw+s.tp);ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(180,220,255,${s.a*tw})`;ctx.fill();});
-  particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.life++;const fade=1-p.life/p.maxLife;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${p.c},${fade*.5})`;ctx.fill();return p.life<p.maxLife;});
-  comets=comets.filter(c=>{c.x+=c.vx;c.y+=c.vy;c.life++;const fade=Math.min(1,1-c.life/c.maxLife);const dx=-c.vx/Math.abs(c.vx)*c.len;const tail=ctx.createLinearGradient(c.x,c.y,c.x+dx,c.y-c.vy/Math.abs(c.vx)*c.len);tail.addColorStop(0,`rgba(0,212,255,${.9*fade})`);tail.addColorStop(.4,`rgba(0,150,255,${.35*fade})`);tail.addColorStop(1,'rgba(0,80,200,0)');ctx.beginPath();ctx.moveTo(c.x,c.y);ctx.lineTo(c.x+dx,c.y-c.vy/Math.abs(c.vx)*c.len);ctx.strokeStyle=tail;ctx.lineWidth=1.8;ctx.stroke();ctx.beginPath();ctx.arc(c.x,c.y,2.5,0,Math.PI*2);ctx.fillStyle=`rgba(210,240,255,${fade})`;ctx.fill();return c.life<c.maxLife&&c.x>-300&&c.x<W+300;});
-  ctx.strokeStyle='rgba(0,212,255,0.025)';ctx.lineWidth=.5;
-  for(let gx=0;gx<W;gx+=80){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}
-  for(let gy=0;gy<H;gy+=80){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
-  requestAnimationFrame(draw);
-}
-draw();
-
-/* ═══════ PRELOADER LOGIC ═══════ */
-(function(){
-  const term=document.getElementById('pl-term');
-  const bar=document.getElementById('pl-bar');
-  const pctEl=document.getElementById('pl-pct');
-  const btn=document.getElementById('pl-btn');
-  const plCv=document.getElementById('pl-canvas');
-  const plCtx=plCv.getContext('2d');
-  const loader=document.getElementById('preloader');
-  let PW,PH;
-  function plResize(){PW=plCv.width=window.innerWidth;PH=plCv.height=window.innerHeight;}
-  plResize();window.addEventListener('resize',plResize);
-  const hexCh='0123456789ABCDEF'.split('');
-  const plCols=Math.ceil(window.innerWidth/13);
-  const plDrops=Array.from({length:plCols},()=>-(Math.random()*60|0));
-  function plFrame(){
-    plCtx.fillStyle='rgba(3,10,26,.17)';plCtx.fillRect(0,0,PW,PH);
-    plCtx.font='11px monospace';
-    plDrops.forEach((y,i)=>{const ch=hexCh[Math.random()*16|0];const bright=Math.random()>.9;plCtx.fillStyle=bright?'rgba(0,255,210,.88)':`rgba(0,212,255,${.1+Math.random()*.18})`;plCtx.fillText(ch,i*13,y*13);if(y*13>PH&&Math.random()>.94)plDrops[i]=0;else plDrops[i]++;});
-    requestAnimationFrame(plFrame);
-  }
-  plFrame();
-  const lines=[
-    {cls:'ld',ms:0,txt:'Загрузка модуля аутентификации...'},
-    {cls:'ok',ms:650,txt:'Ключи шифрования RSA-4096 сгенерированы'},
-    {cls:'ld',ms:1200,txt:'Проверка целостности пакетов...'},
-    {cls:'warn',ms:1900,txt:'Обнаружены устаревшие протоколы TLS 1.0'},
-    {cls:'ok',ms:2500,txt:'Патч безопасности v2.6.1 применён'},
-    {cls:'ld',ms:3050,txt:'Инициализация учебной платформы...'},
-    {cls:'ok',ms:3750,txt:'Система готова · Добро пожаловать'},
-  ];
-  lines.forEach(l=>{setTimeout(()=>{const s=document.createElement('span');s.className='tl '+l.cls;s.textContent=l.txt;term.appendChild(s);term.scrollTop=term.scrollHeight;},l.ms);});
-  const TOTAL_MS=4400;const startT=performance.now();
-  function tick(now){const pct=Math.min(100,Math.round((now-startT)/TOTAL_MS*100));bar.style.width=pct+'%';pctEl.textContent=pct+'%';if(pct<100)requestAnimationFrame(tick);else btn.classList.add('ready');}
-  requestAnimationFrame(tick);
-  window.startPresentation=function(){loader.classList.add('hidden');};
-})();
-
-/* ── PROGRESS BAR ── */
-const progressBar=document.getElementById('progress-bar');
-function updateProgress(n){progressBar.style.width=((n+1)/TOTAL*100)+'%';}
-const _origGoTo=goTo;
-goTo=function(n){
-  if(busy||n===cur||n<0||n>=TOTAL)return;
-  updateProgress(n);
-  _origGoTo(n);
-};
-updateProgress(cur);
-
-/* ── TYPEWRITER ── */
-(function(){
-  const el=document.getElementById('tw-sub');
-  if(!el)return;
-  const txt='Дипломный проект · 2026';
-  let i=0;
-  function step(){if(i<=txt.length){el.textContent=txt.slice(0,i);i++;setTimeout(step,70);}else el.style.borderRight='none';}
-  step();
-})();
-
-/* ── 3D TILT ON CARDS ── */
-(function(){
-  const els=document.querySelectorAll('.team-card,.tool-item,.site-frame,.goal-card');
-  els.forEach(el=>{
-    el.addEventListener('mousemove',e=>{
-      const r=el.getBoundingClientRect();
-      const px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
-      const rx=(py-.5)*-8,ry=(px-.5)*8;
-      el.style.transform=`perspective(700px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
-      el.style.setProperty('--gx',(px*100)+'%');
-      el.style.setProperty('--gy',(py*100)+'%');
-    });
-    el.addEventListener('mouseleave',()=>{el.style.transform='';});
-  });
-})();
-
-/* ── RIPPLE ON NAV BUTTONS ── */
-document.querySelectorAll('.nav-btn').forEach(btn=>{
-  btn.addEventListener('click',e=>{
-    const r=btn.getBoundingClientRect();
-    const ripple=document.createElement('span');
-    ripple.className='ripple';
-    const size=Math.max(r.width,r.height);
-    ripple.style.width=ripple.style.height=size+'px';
-    ripple.style.left=(e.clientX-r.left-size/2)+'px';
-    ripple.style.top=(e.clientY-r.top-size/2)+'px';
-    btn.appendChild(ripple);
-    setTimeout(()=>ripple.remove(),600);
-  });
-});
-
-/* ── CURSOR PARTICLE TRAIL + CLICK BURST ── */
-(function(){
-  const cv=document.getElementById('cursor-fx');
-  const ctx=cv.getContext('2d');
-  let CW,CH;
-  function resize(){CW=cv.width=window.innerWidth;CH=cv.height=window.innerHeight;}
-  resize();window.addEventListener('resize',resize);
-  const TRAIL_LEN=12,STEP=6;
-  let trail=[],bursts=[];
-  let lastX=null,lastY=null,lastMove=performance.now();
-  document.addEventListener('mousemove',e=>{
-    lastMove=performance.now();
-    if(lastX===null){lastX=e.clientX;lastY=e.clientY;return;}
-    const dx=e.clientX-lastX,dy=e.clientY-lastY;
-    const dist=Math.hypot(dx,dy);
-    const steps=Math.max(1,Math.floor(dist/STEP));
-    for(let i=1;i<=steps;i++){trail.push({x:lastX+dx*i/steps,y:lastY+dy*i/steps});}
-    while(trail.length>TRAIL_LEN)trail.shift();
-    lastX=e.clientX;lastY=e.clientY;
-  });
-  document.addEventListener('click',e=>{
-    for(let i=0;i<18;i++){const a=Math.random()*Math.PI*2,sp=Math.random()*3.5+1;bursts.push({x:e.clientX,y:e.clientY,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:0,maxLife:40,r:Math.random()*2.5+1});}
-  });
-  let hue=0;
-  function frame(){
-    ctx.clearRect(0,0,CW,CH);hue=(hue+2)%360;
-    const idle=performance.now()-lastMove>80;
-    if(idle&&trail.length>0)trail.shift();
-    if(trail.length>2){
-      ctx.lineCap='round';ctx.lineJoin='round';
-      for(let i=1;i<trail.length-1;i++){
-        const p0=trail[i-1],p1=trail[i],p2=trail[i+1];
-        const mid1={x:(p0.x+p1.x)/2,y:(p0.y+p1.y)/2};
-        const mid2={x:(p1.x+p2.x)/2,y:(p1.y+p2.y)/2};
-        const f=i/trail.length;
-        ctx.beginPath();ctx.moveTo(mid1.x,mid1.y);ctx.quadraticCurveTo(p1.x,p1.y,mid2.x,mid2.y);
-        ctx.strokeStyle=`hsla(${(hue+f*80)%360},100%,65%,${f*.85})`;
-        ctx.lineWidth=Math.max(.6,f*5);
-        ctx.shadowColor=`hsla(${(hue+f*80)%360},100%,60%,.9)`;ctx.shadowBlur=8;ctx.stroke();
-      }
-      ctx.shadowBlur=0;
+// REVEAL ON SCROLL
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
     }
-    bursts=bursts.filter(p=>{
-      p.x+=p.vx;p.y+=p.vy;p.vx*=.96;p.vy*=.96;p.life++;
-      const f=1-p.life/p.maxLife;
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r*f,0,Math.PI*2);
-      ctx.fillStyle=`rgba(0,255,234,${f*.85})`;ctx.shadowColor='rgba(0,212,255,.8)';ctx.shadowBlur=8;
-      ctx.fill();ctx.shadowBlur=0;
-      return p.life<p.maxLife;
+  });
+}, { threshold: 0.08 });
+reveals.forEach(el => observer.observe(el));
+
+// CURSOR GLOW
+const glow = document.getElementById('cursorGlow');
+document.addEventListener('mousemove', (e) => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+});
+
+// FLOATING PARTICLES
+const container = document.getElementById('particles-container');
+for (let i = 0; i < 18; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.cssText = `
+    left: ${Math.random() * 100}vw;
+    top: ${Math.random() * 100}vh;
+    width: ${Math.random() * 3 + 2}px;
+    height: ${Math.random() * 3 + 2}px;
+    opacity: ${Math.random() * 0.5 + 0.2};
+    animation-duration: ${Math.random() * 8 + 5}s;
+    animation-delay: ${Math.random() * 5}s;
+    background: ${Math.random() > 0.5 ? '#a78bfa' : '#4ade80'};
+    position: fixed;
+  `;
+  document.body.appendChild(p);
+}
+
+// COUNTER ANIMATION
+function animateCounter(el, target, isText) {
+  if (isText) { el.classList.add('animated'); return; }
+  let current = 0;
+  const step = Math.ceil(target / 40);
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = current;
+    if (current >= target) clearInterval(timer);
+  }, 30);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const nums = entry.target.querySelectorAll('.counter-num');
+    nums.forEach(el => {
+  const text = el.textContent.trim();
+  const val = parseInt(text);
+  if (!isNaN(val) && String(val) === text) animateCounter(el, val, false);
+  else animateCounter(el, 0, true);
+});
+    counterObserver.unobserve(entry.target);
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.counter-banner').forEach(el => counterObserver.observe(el));
+
+// HERO STAT COUNTER
+const heroStatObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const nums = entry.target.querySelectorAll('.hero-stat-num');
+    nums.forEach(el => {
+      const val = parseInt(el.textContent);
+      if (!isNaN(val)) animateCounter(el, val, false);
     });
-    requestAnimationFrame(frame);
+    heroStatObserver.unobserve(entry.target);
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.hero-stats').forEach(el => heroStatObserver.observe(el));
+
+// STAGGER ARG CARDS
+const argObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.classList.add('visible');
+    argObserver.unobserve(entry.target);
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.arguments-grid').forEach(el => argObserver.observe(el));
+
+// CLICK RIPPLE on screenshot cards
+document.querySelectorAll('.screenshot-card').forEach(card => {
+  card.addEventListener('click', function(e) {
+    const ripple = document.createElement('div');
+    const rect = card.getBoundingClientRect();
+    ripple.style.cssText = `
+      position:absolute;
+      border-radius:50%;
+      width:10px;height:10px;
+      background:rgba(124,106,247,0.5);
+      left:${e.clientX - rect.left - 5}px;
+      top:${e.clientY - rect.top - 5}px;
+      transform:scale(0);
+      animation:ripple-expand 0.5s ease forwards;
+      pointer-events:none;
+      z-index:10;
+    `;
+    card.style.position = 'relative';
+    card.style.overflow = 'hidden';
+    card.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 500);
+  });
+});
+
+// RIPPLE KEYFRAME (inject)
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes ripple-expand {
+    to { transform: scale(40); opacity: 0; }
   }
-  frame();
-})();
+`;
+document.head.appendChild(style);
+function toggleCommits(id) {
+  const el = document.getElementById('commits-' + id);
+  const isOpen = el.style.display !== 'none';
+  
+  // Найдём кнопку которую нажали
+  const btn = document.querySelector(`[onclick="toggleCommits('${id}')"]`);
+  
+  if (isOpen) {
+    // Закрытие
+    el.style.maxHeight = el.scrollHeight + 'px';
+    el.style.overflow = 'hidden';
+    el.style.transition = 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease';
+    el.style.opacity = '1';
+    requestAnimationFrame(() => {
+      el.style.maxHeight = '0';
+      el.style.opacity = '0';
+    });
+    setTimeout(() => { el.style.display = 'none'; el.style.maxHeight = ''; }, 420);
+    if (btn) btn.style.boxShadow = '';
+  } else {
+    // Открытие
+    el.style.display = 'block';
+    el.style.maxHeight = '0';
+    el.style.opacity = '0';
+    el.style.overflow = 'hidden';
+    el.style.transition = 'max-height 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease';
+    requestAnimationFrame(() => {
+      el.style.maxHeight = el.scrollHeight + 'px';
+      el.style.opacity = '1';
+    });
+    setTimeout(() => { el.style.overflow = 'visible'; }, 650);
+    
+    // Анимация самих строк коммитов
+    const items = el.querySelectorAll('.commit-item');
+    items.forEach((item, i) => {
+      item.style.opacity = '0';
+      item.style.transform = 'translateX(-20px)';
+      item.style.transition = 'none';
+      setTimeout(() => {
+        item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        item.style.opacity = '1';
+        item.style.transform = 'translateX(0)';
+      }, 100 + i * 18);
+    });
+    
+    // Подсветка кнопки
+    if (btn) {
+      btn.style.transition = 'box-shadow 0.3s ease';
+      btn.style.boxShadow = '0 0 30px rgba(124,106,247,0.6), inset 0 0 20px rgba(124,106,247,0.1)';
+    }
+    
+    // Прокрутка к списку
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+  }
+}
+// AURORA BACKGROUND
+const aurora = document.createElement('canvas');
+aurora.style.cssText = `position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.35;`;
+aurora.width = window.innerWidth;
+aurora.height = window.innerHeight;
+document.body.prepend(aurora);
+const ctx = aurora.getContext('2d');
+
+let t = 0;
+function drawAurora() {
+  ctx.clearRect(0, 0, aurora.width, aurora.height);
+  for (let i = 0; i < 3; i++) {
+    const x = aurora.width * (0.2 + i * 0.3 + Math.sin(t * 0.0007 + i * 2) * 0.15);
+    const y = aurora.height * (0.3 + Math.cos(t * 0.0005 + i * 1.5) * 0.2);
+    const r = aurora.width * (0.25 + Math.sin(t * 0.0003 + i) * 0.05);
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+    const colors = [
+      ['rgba(124,106,247,0.18)', 'rgba(124,106,247,0)'],
+      ['rgba(74,222,128,0.10)', 'rgba(74,222,128,0)'],
+      ['rgba(167,139,250,0.14)', 'rgba(167,139,250,0)'],
+    ];
+    grad.addColorStop(0, colors[i][0]);
+    grad.addColorStop(1, colors[i][1]);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(x, y, r * 1.8, r * 0.6, t * 0.0002 + i, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  t++;
+  requestAnimationFrame(drawAurora);
+}
+drawAurora();
+
+window.addEventListener('resize', () => {
+  aurora.width = window.innerWidth;
+  aurora.height = window.innerHeight;
+});
+
+// CLICK BURST
+document.addEventListener('click', (e) => {
+  if (e.target.closest('.screenshot-card') || e.target.closest('.commit-item')) return;
+  for (let i = 0; i < 10; i++) {
+    const dot = document.createElement('div');
+    const angle = (i / 10) * Math.PI * 2;
+    const dist = 40 + Math.random() * 40;
+    const size = 3 + Math.random() * 4;
+    const colors = ['#a78bfa','#7c6af7','#4ade80','#fff'];
+    dot.style.cssText = `
+      position:fixed;
+      left:${e.clientX}px;top:${e.clientY}px;
+      width:${size}px;height:${size}px;
+      border-radius:50%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      pointer-events:none;
+      z-index:9999;
+      transform:translate(-50%,-50%);
+      transition: transform 0.6s cubic-bezier(0.2,0,0.8,1), opacity 0.6s ease;
+    `;
+    document.body.appendChild(dot);
+    requestAnimationFrame(() => {
+      dot.style.transform = `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px))`;
+      dot.style.opacity = '0';
+    });
+    setTimeout(() => dot.remove(), 650);
+  }
+});
+
+// TYPING EFFECT on hero title
+const heroTitle = document.querySelector('.hero-title');
+if (heroTitle) {
+  heroTitle.style.opacity = '0';
+  heroTitle.style.transform = 'translateY(30px)';
+  heroTitle.style.transition = 'opacity 1s ease, transform 1s cubic-bezier(0.34,1.56,0.64,1)';
+  setTimeout(() => {
+    heroTitle.style.opacity = '1';
+    heroTitle.style.transform = 'translateY(0)';
+  }, 300);
+}
+
+document.querySelectorAll('.section-title').forEach(el => {
+  el.style.transition = 'filter 0.4s ease, text-shadow 0.4s ease';
+  el.addEventListener('mouseenter', () => {
+    el.style.filter = 'brightness(1.4) drop-shadow(0 0 18px rgba(167,139,250,0.7))';
+  });
+  el.addEventListener('mouseleave', () => {
+    el.style.filter = '';
+  });
+});
+
+// HERO STATS tilt on hover
+document.querySelectorAll('.hero-stat').forEach(el => {
+  el.addEventListener('mousemove', (e) => {
+    const rect = el.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 20;
+    el.style.transform = `perspective(400px) rotateY(${x}deg) rotateX(${-y}deg) translateY(-4px)`;
+  });
+  el.addEventListener('mouseleave', () => {
+    el.style.transform = '';
+    el.style.transition = 'transform 0.5s cubic-bezier(0.34,1.56,0.64,1)';
+  });
+});
+
+// VERDICT BOX glitch on hover
+const verdictBox = document.querySelector('.verdict-box');
+if (verdictBox) {
+  verdictBox.addEventListener('mouseenter', () => {
+    verdictBox.style.animation = 'glow-pulse 0.5s ease-in-out infinite';
+  });
+  verdictBox.addEventListener('mouseleave', () => {
+    verdictBox.style.animation = 'glow-pulse 3s ease-in-out infinite';
+  });
+}
+// SECRET BUDGET
+function openSecretBudget() {
+  const overlay = document.getElementById('secret-overlay');
+  const dim = document.getElementById('secret-dim');
+  const staticCv = document.getElementById('secret-static');
+  const content = document.getElementById('secret-content');
+  const stamp = document.getElementById('secret-stamp');
+  
+  overlay.style.display = 'block';
+  
+  // Рисуем статику (эффект включения телевизора)
+  const sCtx = staticCv.getContext('2d');
+  staticCv.width = window.innerWidth;
+  staticCv.height = window.innerHeight;
+  let staticFrames = 0;
+  
+  function drawStatic() {
+    const imageData = sCtx.createImageData(staticCv.width, staticCv.height);
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      const v = Math.random() * 255;
+      imageData.data[i] = v;
+      imageData.data[i+1] = v * 0.3;
+      imageData.data[i+2] = v * 0.3;
+      imageData.data[i+3] = 200;
+    }
+    sCtx.putImageData(imageData, 0, 0);
+    staticFrames++;
+    if (staticFrames < 8) requestAnimationFrame(drawStatic);
+  }
+  
+  // Фаза 1: экран темнеет
+  let dimOpacity = 0;
+  const dimAnim = setInterval(() => {
+    dimOpacity = Math.min(dimOpacity + 0.08, 0.92);
+    dim.style.opacity = dimOpacity;
+    if (dimOpacity >= 0.92) {
+      clearInterval(dimAnim);
+      
+      // Фаза 2: статика (как включение записи)
+      staticCv.style.opacity = '0.85';
+      drawStatic();
+      
+      // Горизонтальные полосы развёртки
+      const scanLines = document.createElement('div');
+      scanLines.style.cssText = `position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,0,0,0.03) 0px,rgba(255,0,0,0.03) 1px,transparent 1px,transparent 3px);pointer-events:none;z-index:2;`;
+      overlay.appendChild(scanLines);
+      
+      setTimeout(() => {
+        // Фаза 3: статика исчезает, контент появляется
+        staticCv.style.transition = 'opacity 0.4s';
+        staticCv.style.opacity = '0';
+        
+        content.style.transition = 'opacity 0.5s';
+        content.style.opacity = '1';
+        
+        // Гриф появляется
+        setTimeout(() => {
+          stamp.style.transition = 'opacity 0.3s';
+          stamp.style.opacity = '1';
+        }, 300);
+        
+        // Красное мигание экрана
+        let blinks = 0;
+        const blink = setInterval(() => {
+          dim.style.background = blinks % 2 === 0 ? '#1a0000' : '#000';
+          blinks++;
+          if (blinks > 5) {
+            clearInterval(blink);
+            dim.style.background = '#000';
+          }
+        }, 120);
+        
+      }, 500);
+    }
+  }, 20);
+  
+  // Закрытие по клику
+  overlay.onclick = closeSecretBudget;
+}
+
+function closeSecretBudget() {
+  const overlay = document.getElementById('secret-overlay');
+  const dim = document.getElementById('secret-dim');
+  const content = document.getElementById('secret-content');
+  const stamp = document.getElementById('secret-stamp');
+  const staticCv = document.getElementById('secret-static');
+  const sCtx = staticCv.getContext('2d');
+
+  content.style.transition = 'opacity 0.4s ease';
+  content.style.opacity = '0';
+  stamp.style.transition = 'opacity 0.6s ease';
+  stamp.style.opacity = '0';
+
+  setTimeout(() => {
+    staticCv.style.transition = 'none';
+    staticCv.style.opacity = '0.7';
+    let frames = 0;
+    function drawClosingStatic() {
+      const imageData = sCtx.createImageData(staticCv.width, staticCv.height);
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        const v = Math.random() * 255;
+        imageData.data[i] = v;
+        imageData.data[i+1] = v * 0.3;
+        imageData.data[i+2] = v * 0.3;
+        imageData.data[i+3] = 180;
+      }
+      sCtx.putImageData(imageData, 0, 0);
+      frames++;
+      if (frames < 6) requestAnimationFrame(drawClosingStatic);
+    }
+    drawClosingStatic();
+
+    setTimeout(() => {
+      staticCv.style.transition = 'opacity 0.3s';
+      staticCv.style.opacity = '0';
+      dim.style.transition = 'opacity 0.5s';
+      dim.style.opacity = '0';
+
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        content.style.transition = 'none';
+        stamp.style.transition = 'none';
+        stamp.style.opacity = '0';
+        dim.style.transition = 'none';
+        dim.style.opacity = '0';
+        dim.style.background = '#000';
+        overlay.querySelectorAll('div[style*="repeating-linear-gradient"]').forEach(el => el.remove());
+      }, 550);
+    }, 350);
+  }, 600);
+}
 </script>
+
+</body>
+</html>
+
 </body>
 </html>
